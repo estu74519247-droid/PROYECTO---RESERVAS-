@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso administrativo — PrimeLab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="admin">
+
+<header class="topbar">
+    <a href="index.html" class="brand">
+        <img src="img/PrimeLab%20Logo.png" alt="PrimeLab" class="brand-logo">
+        <span class="brand-copy">
+            <strong>PrimeLab</strong>
+            <small>Centros de salud públicos del Perú</small>
+        </span>
+    </a>
+    <div class="topbar-right">
+        <div class="section-tag">
+            <span>Sección actual</span>
+            <b>ADMIN</b>
+        </div>
+    </div>
+</header>
+
+<main class="login-page">
+    <div class="login-card">
+        <h1>Acceso administrativo</h1>
+        <p class="muted">Ingresa tus credenciales para gestionar citas, médicos y centros.</p>
+        <p class="field-help" style="margin-top:-4px;">Principal: usuario <strong>prime</strong> · correo <strong>primelab@centrosalud.pe</strong> · contraseña <strong>pr1m3l4b</strong><br>También: <strong>admin2</strong> / gestion@centrosalud.pe y <strong>admin3</strong> / soporte@centrosalud.pe (clave PrimeLab2026).</p>
+
+        <div id="alertBox" class="alert" aria-live="polite"></div>
+
+        <form method="POST" action="login.php" class="form-stack">
+            <label class="field">
+                <span>Usuario</span>
+                <input type="text" name="usuario" id="usuario" placeholder="Usuario" required>
+            </label>
+
+            <label class="field">
+                <span>Correo electrónico</span>
+                <input type="email" name="correo" id="correo" placeholder="correo@ejemplo.com" required>
+            </label>
+
+            <label class="field">
+                <span>Contraseña</span>
+                <input type="password" name="password" id="password" placeholder="Contraseña" required>
+            </label>
+
+            <button type="submit" class="button primary full">Ingresar</button>
+        </form>
+
+        <p class="login-foot">
+            <a href="index.html">← Volver al acceso de pacientes</a>
+        </p>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>PrimeLab — Sistema de reserva de citas en centros de salud públicos</p>
+    <p>Proyecto académico. Los datos mostrados son de ejemplo.</p>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

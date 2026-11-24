@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar paciente — PrimeLab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="registro">
+
+<header class="topbar">
+    <a href="index.html" class="brand">
+        <img src="img/PrimeLab%20Logo.png" alt="PrimeLab" class="brand-logo">
+        <span class="brand-copy">
+            <strong>PrimeLab</strong>
+            <small>Centros de salud públicos del Perú</small>
+        </span>
+    </a>
+    <div class="topbar-right">
+        <div class="section-tag">
+            <span>Sección actual</span>
+            <b>REGISTRO</b>
+        </div>
+    </div>
+</header>
+
+<main class="login-page">
+    <div class="login-card">
+        <h1>Registrar paciente</h1>
+        <p class="muted">Escribe tu <strong>número de DNI</strong> (8 números). El sistema buscará tus nombres y apellidos automáticamente. Después solo completa tu teléfono y elige tu seguro.</p>
+
+        <div id="alertBox" class="alert" aria-live="polite"></div>
+
+        <form method="POST" action="registro.php" class="form-stack" id="formRegistro">
+            <label class="field">
+                <span>Número de DNI</span>
+                <div class="input-with-button">
+                    <input type="text" name="dni" id="dni" maxlength="8" inputmode="numeric"
+                           data-numerico="true" data-max="8" data-exacto="8" data-label="DNI"
+                           placeholder="8 números, sin puntos" required>
+                    <button type="button" class="button secondary" id="btnBuscarDni" onclick="buscarDni(true)">
+                        Buscar DNI
+                    </button>
+                </div>
+                <small class="field-help" id="dniEstado" aria-live="polite">Escribe tus 8 números y la búsqueda será automática. También puedes pulsar «Buscar DNI».</small>
+            </label>
+
+            <div class="form-grid-2">
+                <label class="field">
+                    <span>Nombres <span class="hint">(automático)</span></span>
+                    <input type="text" name="nomp" id="nomp" maxlength="40" data-texto="true" data-label="Nombres" placeholder="Se completará con tu DNI" readonly required>
+                </label>
+
+                <label class="field">
+                    <span>Apellidos <span class="hint">(automático)</span></span>
+                    <input type="text" name="apep" id="apep" maxlength="40" data-texto="true" data-label="Apellidos" placeholder="Se completará con tu DNI" readonly required>
+                </label>
+            </div>
+
+            <label class="field">
+                <span>Número de teléfono</span>
+                <input type="text" name="telp" id="telp" maxlength="9" inputmode="numeric"
+                       data-numerico="true" data-max="9" data-exacto="9" data-label="Teléfono"
+                       placeholder="9 números, sin espacios" required>
+                <small class="field-help">Escribe 9 números. Ejemplo: 987654321.</small>
+            </label>
+
+            <label class="field">
+                <span>Correo electrónico <span class="hint">(opcional)</span></span>
+                <input type="email" name="correo" id="correo" maxlength="60" placeholder="correo@ejemplo.com">
+                <small class="field-help">Si no tienes correo, puedes dejar este espacio vacío.</small>
+            </label>
+
+            <label class="field">
+                <span>¿Qué seguro tienes?</span>
+                <select name="seguro" id="seguro" required>
+                    <option value="">Elige una opción</option>
+                    <option value="SIS">SIS (Seguro Integral de Salud)</option>
+                    <option value="EPS">EPS</option>
+                    <option value="Privado">Seguro privado</option>
+                </select>
+                <small class="field-help">El costo de la cita puede variar según tu seguro.</small>
+            </label>
+
+            <button type="submit" class="button primary full">Crear mi cuenta</button>
+            <small class="field-help">Tu contraseña será tu número de DNI. Guárdala para ingresar la próxima vez.</small>
+        </form>
+
+        <div class="ayuda-pasos">
+            <p class="ayuda-titulo">¿Cómo registrarme? (3 pasos)</p>
+            <ol>
+                <li>Escribe tu <strong>DNI</strong> y espera a que aparezcan tus nombres.</li>
+                <li>Completa tu <strong>teléfono</strong> y elige tu <strong>seguro</strong>.</li>
+                <li>Pulsa <strong>Crear mi cuenta</strong>.</li>
+            </ol>
+            <p class="ayuda-nota">Si tus nombres no aparecen, escríbelos tú mismo y continúa con el registro.</p>
+        </div>
+
+        <p class="login-foot">
+            <a href="index.html">¿Ya tienes cuenta? Inicia sesión</a>
+        </p>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>PrimeLab — Sistema de reserva de citas en centros de salud públicos</p>
+    <p>Proyecto académico. Los datos mostrados son de ejemplo.</p>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

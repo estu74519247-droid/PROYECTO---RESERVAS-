@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso de médicos — PrimeLab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="medico_login">
+
+<header class="topbar">
+    <a href="index.html" class="brand">
+        <img src="img/PrimeLab%20Logo.png" alt="PrimeLab" class="brand-logo">
+        <span class="brand-copy">
+            <strong>PrimeLab</strong>
+            <small>Centros de salud públicos del Perú</small>
+        </span>
+    </a>
+    <div class="topbar-right">
+        <div class="section-tag">
+            <span>Sección actual</span>
+            <b>MÉDICO</b>
+        </div>
+    </div>
+</header>
+
+<main class="login-page">
+    <div class="login-card">
+        <h1>Acceso de médicos</h1>
+        <p class="muted">Ingresa tu número de CMP para ver tu perfil y tus citas programadas.</p>
+
+        <div id="alertBox" class="alert" aria-live="polite"></div>
+
+        <form method="POST" action="login_medico.php" class="form-stack">
+            <label class="field">
+                <span>Número de CMP</span>
+                <input type="text" name="cmpm" id="cmpm" maxlength="10" inputmode="numeric"
+                       placeholder="Ejemplo: 10234" required>
+                <small class="field-help">Usa tu CMP para ingresar. <strong>Ejemplo:</strong> 10234 (Dra. Ana Torres).</small>
+            </label>
+
+            <button type="submit" class="button primary full">Ingresar</button>
+        </form>
+
+        <p class="login-foot">
+            <a href="index.html">← Volver al acceso de pacientes</a>
+        </p>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>PrimeLab — Sistema de reserva de citas en centros de salud públicos</p>
+    <p>Proyecto académico. Los datos mostrados son de ejemplo.</p>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

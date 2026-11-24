@@ -1,0 +1,517 @@
+{
+  "usuarios": [
+    {
+      "id": 1,
+      "nombres": "Ana",
+      "apellidos": "García Chávez",
+      "dni": "10000000",
+      "telefono": "900100000",
+      "correo": "usuario01@example.com",
+      "contrasena": "Demo0001!"
+    },
+    {
+      "id": 2,
+      "nombres": "Luis",
+      "apellidos": "Rodríguez Ortiz",
+      "dni": "10000001",
+      "telefono": "900100001",
+      "correo": "usuario02@example.com",
+      "contrasena": "Demo0002!"
+    },
+    {
+      "id": 3,
+      "nombres": "María",
+      "apellidos": "Pérez Silva",
+      "dni": "10000002",
+      "telefono": "900100002",
+      "correo": "usuario03@example.com",
+      "contrasena": "Demo0003!"
+    },
+    {
+      "id": 4,
+      "nombres": "Carlos",
+      "apellidos": "López Cárdenas",
+      "dni": "10000003",
+      "telefono": "900100003",
+      "correo": "usuario04@example.com",
+      "contrasena": "Demo0004!"
+    },
+    {
+      "id": 5,
+      "nombres": "Sofía",
+      "apellidos": "Torres Cabrera",
+      "dni": "10000004",
+      "telefono": "900100004",
+      "correo": "usuario05@example.com",
+      "contrasena": "Demo0005!"
+    },
+    {
+      "id": 6,
+      "nombres": "José",
+      "apellidos": "Flores Tapia",
+      "dni": "10000005",
+      "telefono": "900100005",
+      "correo": "usuario06@example.com",
+      "contrasena": "Demo0006!"
+    },
+    {
+      "id": 7,
+      "nombres": "Valeria",
+      "apellidos": "Ramírez Flores",
+      "dni": "10000006",
+      "telefono": "900100006",
+      "correo": "usuario07@example.com",
+      "contrasena": "Demo0007!"
+    },
+    {
+      "id": 8,
+      "nombres": "Miguel",
+      "apellidos": "Sánchez Mendoza",
+      "dni": "10000007",
+      "telefono": "900100007",
+      "correo": "usuario08@example.com",
+      "contrasena": "Demo0008!"
+    },
+    {
+      "id": 9,
+      "nombres": "Camila",
+      "apellidos": "Díaz Morales",
+      "dni": "10000008",
+      "telefono": "900100008",
+      "correo": "usuario09@example.com",
+      "contrasena": "Demo0009!"
+    },
+    {
+      "id": 10,
+      "nombres": "Jorge",
+      "apellidos": "Castro Huamán",
+      "dni": "10000009",
+      "telefono": "900100009",
+      "correo": "usuario10@example.com",
+      "contrasena": "Demo0010!"
+    },
+    {
+      "id": 11,
+      "nombres": "Lucía",
+      "apellidos": "Vargas Salazar",
+      "dni": "10000010",
+      "telefono": "900100010",
+      "correo": "usuario11@example.com",
+      "contrasena": "Demo0011!"
+    },
+    {
+      "id": 12,
+      "nombres": "Diego",
+      "apellidos": "Rojas Valdez",
+      "dni": "10000011",
+      "telefono": "900100011",
+      "correo": "usuario12@example.com",
+      "contrasena": "Demo0012!"
+    },
+    {
+      "id": 13,
+      "nombres": "Daniela",
+      "apellidos": "Mendoza Palacios",
+      "dni": "10000012",
+      "telefono": "900100012",
+      "correo": "usuario13@example.com",
+      "contrasena": "Demo0013!"
+    },
+    {
+      "id": 14,
+      "nombres": "Pedro",
+      "apellidos": "Chávez Torres",
+      "dni": "10000013",
+      "telefono": "900100013",
+      "correo": "usuario14@example.com",
+      "contrasena": "Demo0014!"
+    },
+    {
+      "id": 15,
+      "nombres": "Andrea",
+      "apellidos": "Ruiz Rojas",
+      "dni": "10000014",
+      "telefono": "900100014",
+      "correo": "usuario15@example.com",
+      "contrasena": "Demo0015!"
+    },
+    {
+      "id": 16,
+      "nombres": "Ricardo",
+      "apellidos": "Herrera Reyes",
+      "dni": "10000015",
+      "telefono": "900100015",
+      "correo": "usuario16@example.com",
+      "contrasena": "Demo0016!"
+    },
+    {
+      "id": 17,
+      "nombres": "Paola",
+      "apellidos": "Medina Quispe",
+      "dni": "10000016",
+      "telefono": "900100016",
+      "correo": "usuario17@example.com",
+      "contrasena": "Demo0017!"
+    },
+    {
+      "id": 18,
+      "nombres": "Fernando",
+      "apellidos": "Cruz Navarro",
+      "dni": "10000017",
+      "telefono": "900100017",
+      "correo": "usuario18@example.com",
+      "contrasena": "Demo0018!"
+    },
+    {
+      "id": 19,
+      "nombres": "Gabriela",
+      "apellidos": "Reyes Peña",
+      "dni": "10000018",
+      "telefono": "900100018",
+      "correo": "usuario19@example.com",
+      "contrasena": "Demo0019!"
+    },
+    {
+      "id": 20,
+      "nombres": "Alonso",
+      "apellidos": "Morales Suárez",
+      "dni": "10000019",
+      "telefono": "900100019",
+      "correo": "usuario20@example.com",
+      "contrasena": "Demo0020!"
+    },
+    {
+      "id": 21,
+      "nombres": "Claudia",
+      "apellidos": "Ortiz López",
+      "dni": "10000020",
+      "telefono": "900100020",
+      "correo": "usuario21@example.com",
+      "contrasena": "Demo0021!"
+    },
+    {
+      "id": 22,
+      "nombres": "Martín",
+      "apellidos": "Gutiérrez Vargas",
+      "dni": "10000021",
+      "telefono": "900100021",
+      "correo": "usuario22@example.com",
+      "contrasena": "Demo0022!"
+    },
+    {
+      "id": 23,
+      "nombres": "Natalia",
+      "apellidos": "Vega Cruz",
+      "dni": "10000022",
+      "telefono": "900100022",
+      "correo": "usuario23@example.com",
+      "contrasena": "Demo0023!"
+    },
+    {
+      "id": 24,
+      "nombres": "Ángel",
+      "apellidos": "Ramos Paredes",
+      "dni": "10000023",
+      "telefono": "900100023",
+      "correo": "usuario24@example.com",
+      "contrasena": "Demo0024!"
+    },
+    {
+      "id": 25,
+      "nombres": "Rosa",
+      "apellidos": "Paredes Fernández",
+      "dni": "10000024",
+      "telefono": "900100024",
+      "correo": "usuario25@example.com",
+      "contrasena": "Demo0025!"
+    },
+    {
+      "id": 26,
+      "nombres": "Kevin",
+      "apellidos": "Quispe Molina",
+      "dni": "10000025",
+      "telefono": "900100025",
+      "correo": "usuario26@example.com",
+      "contrasena": "Demo0026!"
+    },
+    {
+      "id": 27,
+      "nombres": "Fiorella",
+      "apellidos": "Huamán Miranda",
+      "dni": "10000026",
+      "telefono": "900100026",
+      "correo": "usuario27@example.com",
+      "contrasena": "Demo0027!"
+    },
+    {
+      "id": 28,
+      "nombres": "Bruno",
+      "apellidos": "Silva Pérez",
+      "dni": "10000027",
+      "telefono": "900100027",
+      "correo": "usuario28@example.com",
+      "contrasena": "Demo0028!"
+    },
+    {
+      "id": 29,
+      "nombres": "Patricia",
+      "apellidos": "Espinoza Castro",
+      "dni": "10000028",
+      "telefono": "900100028",
+      "correo": "usuario29@example.com",
+      "contrasena": "Demo0029!"
+    },
+    {
+      "id": 30,
+      "nombres": "Andrés",
+      "apellidos": "Campos Medina",
+      "dni": "10000029",
+      "telefono": "900100029",
+      "correo": "usuario30@example.com",
+      "contrasena": "Demo0030!"
+    },
+    {
+      "id": 31,
+      "nombres": "Milagros",
+      "apellidos": "Aguilar Ramos",
+      "dni": "10000030",
+      "telefono": "900100030",
+      "correo": "usuario31@example.com",
+      "contrasena": "Demo0031!"
+    },
+    {
+      "id": 32,
+      "nombres": "Eduardo",
+      "apellidos": "Fernández Aguilar",
+      "dni": "10000031",
+      "telefono": "900100031",
+      "correo": "usuario32@example.com",
+      "contrasena": "Demo0032!"
+    },
+    {
+      "id": 33,
+      "nombres": "Mónica",
+      "apellidos": "Navarro Acosta",
+      "dni": "10000032",
+      "telefono": "900100032",
+      "correo": "usuario33@example.com",
+      "contrasena": "Demo0033!"
+    },
+    {
+      "id": 34,
+      "nombres": "Sebastián",
+      "apellidos": "Salazar León",
+      "dni": "10000033",
+      "telefono": "900100033",
+      "correo": "usuario34@example.com",
+      "contrasena": "Demo0034!"
+    },
+    {
+      "id": 35,
+      "nombres": "Ximena",
+      "apellidos": "Cárdenas Rodríguez",
+      "dni": "10000034",
+      "telefono": "900100034",
+      "correo": "usuario35@example.com",
+      "contrasena": "Demo0035!"
+    },
+    {
+      "id": 36,
+      "nombres": "Raúl",
+      "apellidos": "Delgado Díaz",
+      "dni": "10000035",
+      "telefono": "900100035",
+      "correo": "usuario36@example.com",
+      "contrasena": "Demo0036!"
+    },
+    {
+      "id": 37,
+      "nombres": "Isabel",
+      "apellidos": "Romero Herrera",
+      "dni": "10000036",
+      "telefono": "900100036",
+      "correo": "usuario37@example.com",
+      "contrasena": "Demo0037!"
+    },
+    {
+      "id": 38,
+      "nombres": "Franco",
+      "apellidos": "Acosta Vega",
+      "dni": "10000037",
+      "telefono": "900100037",
+      "correo": "usuario38@example.com",
+      "contrasena": "Demo0038!"
+    },
+    {
+      "id": 39,
+      "nombres": "Elena",
+      "apellidos": "Molina Campos",
+      "dni": "10000038",
+      "telefono": "900100038",
+      "correo": "usuario39@example.com",
+      "contrasena": "Demo0039!"
+    },
+    {
+      "id": 40,
+      "nombres": "Marco",
+      "apellidos": "Peña Romero",
+      "dni": "10000039",
+      "telefono": "900100039",
+      "correo": "usuario40@example.com",
+      "contrasena": "Demo0040!"
+    },
+    {
+      "id": 41,
+      "nombres": "Carmen",
+      "apellidos": "Valdez Fuentes",
+      "dni": "10000040",
+      "telefono": "900100040",
+      "correo": "usuario41@example.com",
+      "contrasena": "Demo0041!"
+    },
+    {
+      "id": 42,
+      "nombres": "Óscar",
+      "apellidos": "Cabrera García",
+      "dni": "10000041",
+      "telefono": "900100041",
+      "correo": "usuario42@example.com",
+      "contrasena": "Demo0042!"
+    },
+    {
+      "id": 43,
+      "nombres": "Adriana",
+      "apellidos": "Bravo Sánchez",
+      "dni": "10000042",
+      "telefono": "900100042",
+      "correo": "usuario43@example.com",
+      "contrasena": "Demo0043!"
+    },
+    {
+      "id": 44,
+      "nombres": "Piero",
+      "apellidos": "Fuentes Ruiz",
+      "dni": "10000043",
+      "telefono": "900100043",
+      "correo": "usuario44@example.com",
+      "contrasena": "Demo0044!"
+    },
+    {
+      "id": 45,
+      "nombres": "Silvia",
+      "apellidos": "León Gutiérrez",
+      "dni": "10000044",
+      "telefono": "900100044",
+      "correo": "usuario45@example.com",
+      "contrasena": "Demo0045!"
+    },
+    {
+      "id": 46,
+      "nombres": "Renzo",
+      "apellidos": "Miranda Espinoza",
+      "dni": "10000045",
+      "telefono": "900100045",
+      "correo": "usuario46@example.com",
+      "contrasena": "Demo0046!"
+    },
+    {
+      "id": 47,
+      "nombres": "Teresa",
+      "apellidos": "Suárez Delgado",
+      "dni": "10000046",
+      "telefono": "900100046",
+      "correo": "usuario47@example.com",
+      "contrasena": "Demo0047!"
+    },
+    {
+      "id": 48,
+      "nombres": "Gustavo",
+      "apellidos": "Palacios Bravo",
+      "dni": "10000047",
+      "telefono": "900100047",
+      "correo": "usuario48@example.com",
+      "contrasena": "Demo0048!"
+    },
+    {
+      "id": 49,
+      "nombres": "Juliana",
+      "apellidos": "Tapia Núñez",
+      "dni": "10000048",
+      "telefono": "900100048",
+      "correo": "usuario49@example.com",
+      "contrasena": "Demo0049!"
+    },
+    {
+      "id": 50,
+      "nombres": "Héctor",
+      "apellidos": "Núñez Ramírez",
+      "dni": "10000049",
+      "telefono": "900100049",
+      "correo": "usuario50@example.com",
+      "contrasena": "Demo0050!"
+    },
+    {
+      "id": 51,
+      "nombres": "Ademir Andrew Alberto",
+      "apellidos": "Sanchez Chinchay",
+      "dni": "61216468",
+      "telefono": "972135089",
+      "correo": "estu61216468@institutobolivar.edu.pe",
+      "contrasena": "61216468"
+    },
+    {
+      "id": 52,
+      "nombres": "Fabbio Giuliano Abedi",
+      "apellidos": "Flores Padilla",
+      "dni": "74519247",
+      "telefono": "977473318",
+      "correo": "estu74519247@institutobolivar.edu.pe",
+      "contrasena": "74519247"
+    },
+    {
+      "id": 53,
+      "nombres": "Alexandro David",
+      "apellidos": "Villachica Rodriguez",
+      "dni": "72850117",
+      "telefono": "987751145",
+      "correo": "estu72850117@institutobolivar.edu.pe",
+      "contrasena": "72850117"
+    },
+    {
+      "id": 54,
+      "nombres": "Leandro Francesco",
+      "apellidos": "Alvarez Marres",
+      "dni": "75532819",
+      "telefono": "902323479",
+      "correo": "estu75532819@institutobolivar.edu.pe",
+      "contrasena": "75532819"
+    },
+    {
+      "id": 55,
+      "nombres": "Humberto Vicente",
+      "apellidos": "Portal Retamoso",
+      "dni": "72484597",
+      "telefono": "969424717",
+      "correo": "estu72484597@institutobolivar.edu.pe",
+      "contrasena": "72484597"
+    },
+    {
+      "id": 56,
+      "nombres": "Estuar Sebastian",
+      "apellidos": "Aparco Bedia",
+      "dni": "72689307",
+      "telefono": "904866021",
+      "correo": "estu72689307@institutobolivar.edu.pe",
+      "contrasena": "72689307"
+    },
+    {
+      "id": 57,
+      "nombres": "Eidan",
+      "apellidos": "Valencia Zamora",
+      "dni": "61161158",
+      "telefono": "994784726",
+      "correo": "estu61161158@institutobolivar.edu.pe",
+      "contrasena": "61161158"
+    }
+  ]
+}

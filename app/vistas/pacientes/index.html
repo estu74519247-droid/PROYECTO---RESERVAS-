@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión — PrimeLab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="login">
+
+<header class="topbar">
+    <a href="index.html" class="brand">
+        <img src="img/PrimeLab%20Logo.png" alt="PrimeLab" class="brand-logo">
+        <span class="brand-copy">
+            <strong>PrimeLab</strong>
+            <small>Centros de salud públicos del Perú</small>
+        </span>
+    </a>
+    <div class="topbar-right">
+        <div class="section-tag">
+            <span>Sección actual</span>
+            <b>INGRESO</b>
+        </div>
+    </div>
+</header>
+
+<main class="login-page">
+    <div class="login-card">
+        <h1>Ingreso de pacientes</h1>
+        <p class="muted">Escribe tu <strong>número de DNI</strong> y tu <strong>contraseña</strong> para reservar o revisar tus citas. Si es tu primera vez, tu contraseña es tu mismo DNI.</p>
+
+        <div id="alertBox" class="alert" aria-live="polite"></div>
+
+        <form method="POST" action="login_paciente.php" class="form-stack">
+            <label class="field">
+                <span>Número de DNI</span>
+                <input type="text" name="dni" id="dni" maxlength="8" inputmode="numeric"
+                       autocomplete="username" aria-describedby="ayudaDni"
+                       data-numerico="true" data-max="8" data-exacto="8" data-label="DNI"
+                       placeholder="8 números, sin puntos" required>
+                <small class="field-help" id="ayudaDni">Son los 8 números de tu documento de identidad. No escribas puntos ni espacios.</small>
+            </label>
+
+            <label class="field">
+                <span>Contraseña</span>
+                <input type="password" name="contrasena" id="contrasena" maxlength="60"
+                       autocomplete="current-password" aria-describedby="ayudaClave"
+                       placeholder="Escribe tu contraseña" required>
+                <small class="field-help" id="ayudaClave">La primera vez que ingresas, tu contraseña es tu DNI. Puedes usar el botón «Mostrar» para ver lo que escribes.</small>
+            </label>
+
+            <button type="submit" class="button primary full">Ingresar</button>
+        </form>
+
+        <div class="ayuda-pasos">
+            <p class="ayuda-titulo">¿Cómo ingresar? (3 pasos)</p>
+            <ol>
+                <li>Escribe tu <strong>DNI</strong> (8 números).</li>
+                <li>Escribe tu <strong>contraseña</strong>. Si es tu primera vez, es tu DNI.</li>
+                <li>Pulsa el botón <strong>Ingresar</strong>.</li>
+            </ol>
+            <p class="ayuda-nota">Si no recuerdas tu contraseña, comunícate con el centro de salud donde te atendiste.</p>
+        </div>
+
+        <p class="login-foot">
+            ¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a>
+        </p>
+        <p class="login-foot">
+            <a href="medico_login.html">Acceso para médicos</a>
+        </p>
+        <p class="login-foot">
+            <a href="admin_login.html">Acceso administrativo</a>
+        </p>
+    </div>
+</main>
+
+<footer class="site-footer">
+    <p>PrimeLab — Sistema de reserva de citas en centros de salud públicos</p>
+    <p>Proyecto académico. Los datos mostrados son de ejemplo.</p>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

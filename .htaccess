@@ -1,0 +1,6 @@
+DirectoryIndex index.php
+AcceptPathInfo Off
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^[a-z_]+\.(php|html)$ index.php [END,NC]
