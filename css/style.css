@@ -2472,3 +2472,676 @@ body::-webkit-scrollbar-thumb:hover {
     background: none;
   }
 }
+
+/* ==========================================================================
+   MEJORAS — PANTALLA DE INICIO DEL PACIENTE (panel.php)
+   Pegar AL FINAL de css/style.css, DESPUÉS del bloque anterior.
+   Solo CSS: no cambia HTML, PHP ni JS.
+   Corrige: franja cortada en las tarjetas, datos de la cita desparejos,
+   nombre del médico en mayúsculas pequeñas, "Hora" suelta en otra fila
+   y botones del banner pegados.
+   ========================================================================== */
+
+/* ---- Banner: botones separados y mejor ritmo ---- */
+.banner-copy p {
+  max-width: 46ch;
+  font-size: 18px;
+}
+.banner-copy .button {
+  margin: 0 10px 10px 0;
+}
+.dashboard-banner .button.secondary {
+  color: var(--teal-800);
+}
+.dashboard-banner .button.secondary:hover {
+  background: #fff;
+}
+
+/* Ticket "Próxima cita" del banner: más legible y con acento */
+.mini-ticket {
+  min-width: 250px;
+  padding: 16px 18px;
+  border-left: 3px solid var(--accent);
+}
+.mini-ticket strong {
+  font-family: "Sora", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.mini-ticket small {
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+/* ---- Tarjetas de resumen: sin franja cortada, con color propio ---- */
+.summary-card::before {
+  content: none;
+}
+.summary-card {
+  padding: 20px 22px 18px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, #ffffff 55%, var(--blue-50) 100%);
+}
+.summary-card::after {
+  content: "";
+  position: absolute;
+  right: -26px;
+  top: -26px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(47, 143, 131, 0.18),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+.summary-card:nth-child(2) {
+  background: linear-gradient(160deg, #ffffff 55%, #fdf1e9 100%);
+}
+.summary-card:nth-child(2)::after {
+  background: radial-gradient(
+    circle,
+    rgba(227, 155, 114, 0.28),
+    transparent 70%
+  );
+}
+.summary-card:nth-child(3) {
+  background: linear-gradient(160deg, #ffffff 55%, var(--success-bg) 100%);
+}
+.summary-card:nth-child(3)::after {
+  background: radial-gradient(circle, rgba(31, 107, 74, 0.18), transparent 70%);
+}
+
+.summary-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.summary-label::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue-500);
+  box-shadow: 0 0 0 4px rgba(47, 143, 131, 0.15);
+}
+.summary-card:nth-child(2) .summary-label::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgba(227, 155, 114, 0.2);
+}
+.summary-card:nth-child(3) .summary-label::before {
+  background: var(--success);
+  box-shadow: 0 0 0 4px rgba(31, 107, 74, 0.16);
+}
+.summary-count {
+  font-size: 40px;
+  margin: 4px 0 2px;
+}
+.summary-details {
+  font-weight: 600;
+}
+
+/* ---- Próxima cita: cuadrícula pareja (3 × 2) ---- */
+.panel-head .panel-title::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 5px rgba(227, 155, 114, 0.22);
+  vertical-align: middle;
+}
+.panel-head .link-inline {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background-color: var(--blue-100);
+  background-image: none;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+.panel-head .link-inline:hover {
+  background-color: var(--blue-200);
+  transform: translateX(2px);
+}
+.panel-head .link-inline::after {
+  content: " →";
+}
+
+.data-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.data-grid div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  min-height: 92px;
+  padding: 14px 16px;
+  border-radius: 14px;
+}
+.data-grid div > span {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin: 0;
+}
+.data-grid div > strong {
+  font-size: 18px;
+  line-height: 1.3;
+  color: var(--teal-900);
+}
+
+/* Código de cita destacado como etiqueta */
+.data-grid div:nth-child(1) > strong {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: var(--teal-800);
+  color: #fff;
+}
+
+/* Médico: foto al lado del nombre, con tipografía normal */
+.data-grid .medico-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.data-grid .medico-inline .medico-foto {
+  width: 44px;
+  height: 44px;
+  border-width: 2px;
+}
+.data-grid .medico-inline > span {
+  display: block;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--teal-900);
+  line-height: 1.3;
+}
+
+/* ---- Adaptación a pantallas más pequeñas ---- */
+@media (max-width: 900px) {
+  .data-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+  .data-grid div {
+    min-height: 0;
+  }
+  .summary-count {
+    font-size: 34px;
+  }
+  .banner-copy .button {
+    width: 100%;
+    margin-right: 0;
+  }
+}
+
+/* ==========================================================================
+   MEJORAS — RESERVAR CITA, PASO 1 (elegir centro)
+   Pegar AL FINAL de css/style.css, después de los bloques anteriores.
+   Solo CSS: no cambia HTML, PHP ni JS.
+   Corrige: tarjetas con textos muy separados y botones a distinta altura,
+   filtros desalineados, icono poco integrado y pasos sin conexión visual.
+   ========================================================================== */
+
+/* ---- Pasos: conectados entre sí ---- */
+.steps {
+  gap: 34px;
+  margin-bottom: 26px;
+}
+.step {
+  position: relative;
+}
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(100% + 6px);
+  top: 50%;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--blue-300) 0 5px,
+    transparent 5px 9px
+  );
+}
+.step.done:not(:last-child)::after {
+  background: var(--success);
+}
+.step.active {
+  box-shadow: 0 8px 20px rgba(20, 80, 75, 0.14);
+  transform: translateY(-1px);
+}
+.step:not(.active):not(.done) {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* ---- Barra de filtros ---- */
+.filter-bar {
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(20, 80, 75, 0.07);
+  margin-bottom: 20px;
+}
+.filter-bar .field > span {
+  line-height: 1.3;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+.filter-bar .field input,
+.filter-bar .select-trigger {
+  min-height: 54px;
+  height: 54px;
+}
+.filter-bar .button {
+  min-height: 54px;
+  height: 54px;
+  padding-inline: 30px;
+}
+
+/* ---- Tarjetas de centros: contenido ordenado y botón siempre abajo ---- */
+.center-grid {
+  gap: 20px;
+}
+.center-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 22px;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff 60%, var(--blue-50) 100%);
+  box-shadow: 0 10px 26px rgba(20, 80, 75, 0.07);
+}
+.center-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--blue-500), var(--accent));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.center-card:hover {
+  box-shadow: 0 20px 40px rgba(20, 80, 75, 0.16);
+}
+.center-card:hover::before {
+  opacity: 1;
+}
+
+.center-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  font-size: 24px;
+  margin-bottom: 14px;
+  background: #fff;
+  border: 1px solid var(--blue-200);
+  box-shadow: 0 6px 14px rgba(20, 80, 75, 0.1);
+  transition: transform 0.25s ease;
+}
+.center-card:hover .center-icon {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+.center-card h3 {
+  font-size: 19px;
+  line-height: 1.25;
+  color: var(--teal-900);
+  margin-bottom: 10px;
+}
+.center-card p {
+  margin: 0;
+}
+
+/* Dirección y ubicación: texto compacto con icono */
+.center-card p.muted:nth-of-type(1),
+.center-card p.muted:nth-of-type(2) {
+  position: relative;
+  padding-left: 26px;
+  font-size: 16px;
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+.center-card p.muted:nth-of-type(1)::before {
+  content: "📍";
+  position: absolute;
+  left: 0;
+  top: 1px;
+  font-size: 15px;
+}
+.center-card p.muted:nth-of-type(2)::before {
+  content: "🧭";
+  position: absolute;
+  left: 0;
+  top: 1px;
+  font-size: 15px;
+}
+
+/* Tipo / teléfono y horario: recuadros claros */
+.center-card p.muted:nth-of-type(3),
+.center-card p.muted:nth-of-type(4) {
+  font-size: 15.5px;
+  line-height: 1.45;
+  padding: 9px 12px;
+  margin-top: 8px;
+  background: var(--blue-50);
+  border: 1px solid var(--blue-100);
+  border-radius: 10px;
+  color: var(--ink-soft);
+}
+.center-card p.muted:nth-of-type(3) strong,
+.center-card p.muted:nth-of-type(4) strong {
+  color: var(--teal-800);
+}
+
+/* Especialidades: bloque separado, más pequeño y fácil de leer */
+.center-card p:not(.muted) {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--blue-200);
+  flex: 1 0 auto;
+}
+.center-card p:not(.muted) small {
+  display: block;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.center-card p:not(.muted) small strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal-800);
+}
+
+/* Botón: siempre al final de la tarjeta y con más presencia */
+.center-card .button.full {
+  margin-top: 18px;
+  min-height: 52px;
+  background: #fff;
+  border: 2px solid var(--blue-200);
+  color: var(--teal-800);
+}
+.center-card .button.full::after {
+  content: "→";
+  transition: transform 0.2s ease;
+}
+.center-card:hover .button.full {
+  background: linear-gradient(
+    135deg,
+    #38a395 0%,
+    var(--blue-500) 35%,
+    var(--teal-800) 100%
+  );
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(20, 80, 75, 0.25);
+}
+.center-card .button.full:hover::after {
+  transform: translateX(4px);
+}
+
+/* ---- Sin resultados ---- */
+.center-grid > p.muted {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 30px 20px;
+  background: #fff;
+  border: 1px dashed var(--blue-300);
+  border-radius: 16px;
+}
+
+/* ---- Pantallas pequeñas ---- */
+@media (max-width: 900px) {
+  .steps {
+    gap: 12px;
+  }
+  .step:not(:last-child)::after {
+    display: none;
+  }
+}
+@media (max-width: 620px) {
+  .center-grid {
+    grid-template-columns: 1fr;
+  }
+  .filter-bar .field input,
+  .filter-bar .select-trigger,
+  .filter-bar .button {
+    height: auto;
+  }
+}
+
+/* ==========================================================================
+   MEJORAS — MIS CITAS (y todas las tablas del sistema)
+   Pegar AL FINAL de css/style.css, después de los bloques anteriores.
+   Solo CSS: no cambia HTML, PHP ni JS.
+   Corrige: la columna "Acción" se salía del panel (la línea de la fila
+   quedaba cortada), "Ver ticket" y "S/ 0.00" partidos en dos líneas,
+   y la tabla se veía apretada y plana.
+   ========================================================================== */
+
+/* ---- Arreglo principal: la celda de acciones rompía la tabla ---- */
+.table td.actions-cell {
+  display: table-cell; /* antes era flex y se salía de la fila */
+  white-space: nowrap;
+}
+.table td.actions-cell .button {
+  margin-right: 6px;
+}
+.table td.actions-cell .button:last-child {
+  margin-right: 0;
+}
+
+/* ---- Contenedor de la tabla ---- */
+.table-responsive {
+  border: 1px solid var(--blue-100);
+  border-radius: 16px;
+  background-color: #fff;
+}
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 15.5px;
+}
+
+/* ---- Encabezado ---- */
+.table th {
+  padding: 14px 16px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--blue-200);
+}
+.table th:first-child {
+  border-top-left-radius: 15px;
+}
+.table th:last-child {
+  border-top-right-radius: 15px;
+}
+
+/* ---- Filas ---- */
+.table td {
+  padding: 16px;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--blue-100);
+  color: var(--ink);
+}
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.table tbody tr {
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.table tbody tr:hover {
+  background: var(--blue-50);
+  box-shadow: inset 3px 0 0 var(--blue-500);
+}
+.table td small.muted {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* Columnas que no deben partirse en dos líneas */
+.table td:nth-child(1),   /* código */
+.table td:nth-child(6),   /* costo */
+.table td:nth-child(7) {
+  /* estado */
+  white-space: nowrap;
+}
+.table td:nth-child(2) {
+  min-width: 150px;
+} /* fecha y hora */
+.table td:nth-child(6) {
+  font-weight: 700;
+  color: var(--teal-800);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Código de la cita ---- */
+.table .code {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: var(--teal-800);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* ---- Médico ---- */
+.table .medico-inline {
+  gap: 12px;
+}
+.table .medico-inline .medico-foto {
+  width: 38px;
+  height: 38px;
+  box-shadow: 0 3px 8px rgba(20, 80, 75, 0.15);
+}
+.table .medico-inline > span:last-child {
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* ---- Estado: etiqueta con punto de color ---- */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.status-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.status-pending::before {
+  animation: pl-pulso 1.8s ease-in-out infinite;
+}
+@keyframes pl-pulso {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(138, 90, 18, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(138, 90, 18, 0);
+  }
+}
+
+/* ---- Botones dentro de la tabla ---- */
+.table .button.small {
+  min-height: 42px;
+  padding: 8px 18px;
+  white-space: nowrap;
+  background: #fff;
+  border: 2px solid var(--blue-200);
+  color: var(--teal-800);
+}
+.table .button.small:hover {
+  background: linear-gradient(
+    135deg,
+    #38a395 0%,
+    var(--blue-500) 35%,
+    var(--teal-800) 100%
+  );
+  border-color: transparent;
+  color: #fff;
+}
+.table .button.danger.small {
+  border-color: var(--danger-bd);
+  color: var(--danger);
+}
+.table .button.danger.small:hover {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+/* ---- Tabla vacía ---- */
+.table-empty {
+  padding: 40px 16px !important;
+  font-size: 16px;
+}
+.table-empty::before {
+  content: "🗂";
+  display: block;
+  font-size: 32px;
+  margin-bottom: 6px;
+  opacity: 0.7;
+}
+
+/* ---- Encabezado del panel: botón "Nueva cita" ---- */
+.panel-head .button.secondary {
+  border: 2px solid var(--blue-200);
+  min-height: 46px;
+  padding: 9px 22px;
+}
+.panel-head .button.secondary::before {
+  content: "＋";
+  font-weight: 800;
+  color: var(--blue-500);
+}
+.panel-head .button.secondary:hover {
+  background: linear-gradient(
+    135deg,
+    #38a395 0%,
+    var(--blue-500) 35%,
+    var(--teal-800) 100%
+  );
+  border-color: transparent;
+  color: #fff;
+}
+.panel-head .button.secondary:hover::before {
+  color: #fff;
+}
