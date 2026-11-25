@@ -1063,3 +1063,175 @@ body.alto-contraste .panel-title { color: #000000; }
     .login-card h1 { font-size: 27px; }
     .login-foot + .login-foot { width: 100%; }
 }
+
+/* ==========================================================================
+   MEJORAS — RESERVAR CITA, PASO 1 (elegir centro)
+   Pegar AL FINAL de css/style.css, después de los bloques anteriores.
+   Solo CSS: no cambia HTML, PHP ni JS.
+   Corrige: tarjetas con textos muy separados y botones a distinta altura,
+   filtros desalineados, icono poco integrado y pasos sin conexión visual.
+   ========================================================================== */
+
+/* ---- Pasos: conectados entre sí ---- */
+.steps { gap: 34px; margin-bottom: 26px; }
+.step { position: relative; }
+.step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: calc(100% + 6px);
+    top: 50%;
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(90deg, var(--blue-300) 0 5px, transparent 5px 9px);
+}
+.step.done:not(:last-child)::after { background: var(--success); }
+.step.active { box-shadow: 0 8px 20px rgba(20, 80, 75, 0.14); transform: translateY(-1px); }
+.step:not(.active):not(.done) { background: rgba(255, 255, 255, 0.7); }
+
+/* ---- Barra de filtros ---- */
+.filter-bar {
+    gap: 14px;
+    padding: 18px 20px;
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(20, 80, 75, 0.07);
+    margin-bottom: 20px;
+}
+.filter-bar .field > span { line-height: 1.3; font-size: 15px; letter-spacing: 0.01em; }
+.filter-bar .field input,
+.filter-bar .select-trigger { min-height: 54px; height: 54px; }
+.filter-bar .button { min-height: 54px; height: 54px; padding-inline: 30px; }
+
+/* ---- Tarjetas de centros: contenido ordenado y botón siempre abajo ---- */
+.center-grid { gap: 20px; }
+.center-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 22px;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #ffffff 60%, var(--blue-50) 100%);
+    box-shadow: 0 10px 26px rgba(20, 80, 75, 0.07);
+}
+.center-card::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue-500), var(--accent));
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+.center-card:hover { box-shadow: 0 20px 40px rgba(20, 80, 75, 0.16); }
+.center-card:hover::before { opacity: 1; }
+
+.center-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    font-size: 24px;
+    margin-bottom: 14px;
+    background: #fff;
+    border: 1px solid var(--blue-200);
+    box-shadow: 0 6px 14px rgba(20, 80, 75, 0.10);
+    transition: transform .25s ease;
+}
+.center-card:hover .center-icon { transform: scale(1.08) rotate(-4deg); }
+
+.center-card h3 {
+    font-size: 19px;
+    line-height: 1.25;
+    color: var(--teal-900);
+    margin-bottom: 10px;
+}
+.center-card p { margin: 0; }
+
+/* Dirección y ubicación: texto compacto con icono */
+.center-card p.muted:nth-of-type(1),
+.center-card p.muted:nth-of-type(2) {
+    position: relative;
+    padding-left: 26px;
+    font-size: 16px;
+    line-height: 1.45;
+    margin-bottom: 6px;
+}
+.center-card p.muted:nth-of-type(1)::before { content: "📍"; position: absolute; left: 0; top: 1px; font-size: 15px; }
+.center-card p.muted:nth-of-type(2)::before { content: "🧭"; position: absolute; left: 0; top: 1px; font-size: 15px; }
+
+/* Tipo / teléfono y horario: recuadros claros */
+.center-card p.muted:nth-of-type(3),
+.center-card p.muted:nth-of-type(4) {
+    font-size: 15.5px;
+    line-height: 1.45;
+    padding: 9px 12px;
+    margin-top: 8px;
+    background: var(--blue-50);
+    border: 1px solid var(--blue-100);
+    border-radius: 10px;
+    color: var(--ink-soft);
+}
+.center-card p.muted:nth-of-type(3) strong,
+.center-card p.muted:nth-of-type(4) strong { color: var(--teal-800); }
+
+/* Especialidades: bloque separado, más pequeño y fácil de leer */
+.center-card p:not(.muted) {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--blue-200);
+    flex: 1 0 auto;
+}
+.center-card p:not(.muted) small {
+    display: block;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--muted);
+}
+.center-card p:not(.muted) small strong {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal-800);
+}
+
+/* Botón: siempre al final de la tarjeta y con más presencia */
+.center-card .button.full {
+    margin-top: 18px;
+    min-height: 52px;
+    background: #fff;
+    border: 2px solid var(--blue-200);
+    color: var(--teal-800);
+}
+.center-card .button.full::after { content: "→"; transition: transform .2s ease; }
+.center-card:hover .button.full {
+    background: linear-gradient(135deg, #38a395 0%, var(--blue-500) 35%, var(--teal-800) 100%);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(20, 80, 75, 0.25);
+}
+.center-card .button.full:hover::after { transform: translateX(4px); }
+
+/* ---- Sin resultados ---- */
+.center-grid > p.muted {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 30px 20px;
+    background: #fff;
+    border: 1px dashed var(--blue-300);
+    border-radius: 16px;
+}
+
+/* ---- Pantallas pequeñas ---- */
+@media (max-width: 900px) {
+    .steps { gap: 12px; }
+    .step:not(:last-child)::after { display: none; }
+}
+@media (max-width: 620px) {
+    .center-grid { grid-template-columns: 1fr; }
+    .filter-bar .field input,
+    .filter-bar .select-trigger,
+    .filter-bar .button { height: auto; }
+}
