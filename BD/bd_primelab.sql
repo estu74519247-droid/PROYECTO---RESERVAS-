@@ -32,14 +32,14 @@ CREATE TABLE `centro` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 INSERT INTO `centro` (`codce`, `nomce`, `dirc`, `distrito`, `provincia`, `departamento`, `telefono`, `horario_atencion`, `tipo`) VALUES
-('CEN001', 'Centro de Salud San Martín de Porres', 'Av. Perú 1250, Urb. San Martín', 'Cercado de Lima', 'Lima', 'Lima', '014567890', 'Lunes a Sábado 07:00 - 19:00', 'Público'),
-('CEN002', 'Centro de Salud Santa Rosa - SJL', 'Jr. Los Jardines 420, AA.HH. Santa Rosa', 'San Juan de Lurigancho', 'Lima', 'Lima', '014321876', 'Lunes a Viernes 07:00 - 17:00', 'Público'),
-('CEN003', 'Centro Materno Infantil Surco', 'Av. Caminos del Inca 730, Urb. Los Álamos', 'Santiago de Surco', 'Lima', 'Lima', '012345678', 'Lunes a Sábado 07:00 - 18:00', 'Público'),
-('CEN004', 'Centro de Salud Jesús María', 'Av. Horacio Urteaga 950, Residencial San Felipe', 'Jesús María', 'Lima', 'Lima', '014637281', 'Lunes a Viernes 07:00 - 17:00', 'Público'),
-('CEN005', 'Policlínico Municipal Los Olivos', 'Av. Carlos Izaguirre 820, Urb. Sol de Oro', 'Los Olivos', 'Lima', 'Lima', '015238476', 'Lunes a Sábado 07:00 - 19:00', 'Público'),
-('CEN006', 'Centro Médico Integral Villa El Salvador', 'Av. Revolución 1530, Sector 3 Grupo 10', 'Villa El Salvador', 'Lima', 'Lima', '012938475', 'Lunes a Viernes 07:00 - 17:00', 'Público'),
-('CEN007', 'Centro de Salud Breña', 'Jr. Zorritos 1234', 'Breña', 'Lima', 'Lima', '014298763', 'Lunes a Viernes 07:00 - 17:00', 'Público'),
-('CEN008', 'Centro Materno Infantil Comas', 'Av. Túpac Amaru 3450', 'Comas', 'Lima', 'Lima', '015432187', 'Lunes a Sábado 07:00 - 18:00', 'Público');
+('CEN001', 'Centro de Salud San Martín de Porres', 'Av. Perú 1250, Urb. San Martín', 'Cercado de Lima', 'Lima', 'Lima', '014567890', 'Lunes a Domingos 07:00 - 19:00', 'Público'),
+('CEN002', 'Centro de Salud Santa Rosa - SJL', 'Jr. Los Jardines 420, AA.HH. Santa Rosa', 'San Juan de Lurigancho', 'Lima', 'Lima', '014321876', 'Lunes a Domingos 07:00 - 17:00', 'Público'),
+('CEN003', 'Centro Materno Infantil Surco', 'Av. Caminos del Inca 730, Urb. Los Álamos', 'Santiago de Surco', 'Lima', 'Lima', '012345678', 'Lunes a Domingos 07:00 - 18:00', 'Público'),
+('CEN004', 'Centro de Salud Jesús María', 'Av. Horacio Urteaga 950, Residencial San Felipe', 'Jesús María', 'Lima', 'Lima', '014637281', 'Lunes a Domingos 07:00 - 17:00', 'Público'),
+('CEN005', 'Policlínico Municipal Los Olivos', 'Av. Carlos Izaguirre 820, Urb. Sol de Oro', 'Los Olivos', 'Lima', 'Lima', '015238476', 'Lunes a Domingos 07:00 - 19:00', 'Público'),
+('CEN006', 'Centro Médico Integral Villa El Salvador', 'Av. Revolución 1530, Sector 3 Grupo 10', 'Villa El Salvador', 'Lima', 'Lima', '012938475', 'Lunes a Domingos 07:00 - 17:00', 'Público'),
+('CEN007', 'Centro de Salud Breña', 'Jr. Zorritos 1234', 'Breña', 'Lima', 'Lima', '014298763', 'Lunes a Domingos 07:00 - 17:00', 'Público'),
+('CEN008', 'Centro Materno Infantil Comas', 'Av. Túpac Amaru 3450', 'Comas', 'Lima', 'Lima', '015432187', 'Lunes a Domingos 07:00 - 18:00', 'Público');
 
 -- --------------------------------------------------------
 -- Tabla `especialidad`
