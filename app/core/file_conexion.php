@@ -253,14 +253,31 @@ primelab_query(
     "ALTER TABLE administrador MODIFY contrasena VARCHAR(255) NOT NULL"
 );
 /** Lista de administradores de ejemplo (mínimo 3, solicitado para la demo). */
+
 function administradoresDefecto()
 {
     return [
-        ['usuario' => 'prime',  'correo' => 'primelab@centrosalud.pe', 'contrasena' => 'pr1m3l4b', 'nombre' => 'Administrador principal'],
-        ['usuario' => 'admin2', 'correo' => 'gestion@centrosalud.pe',  'contrasena' => 'PrimeLab2026', 'nombre' => 'Coordinación de citas'],
-        ['usuario' => 'admin3', 'correo' => 'soporte@centrosalud.pe',  'contrasena' => 'PrimeLab2026', 'nombre' => 'Soporte técnico'],
+        [
+            'usuario' => 'prime',
+            'correo' => 'primelab@centrosalud.pe',
+            'contrasena' => password_hash('CLAVE_NUEVA_PRIME', PASSWORD_DEFAULT),
+            'nombre' => 'Administrador principal'
+        ],
+        [
+            'usuario' => 'admin2',
+            'correo' => 'gestion@centrosalud.pe',
+            'contrasena' => password_hash('CLAVE_NUEVA_ADMIN2', PASSWORD_DEFAULT),
+            'nombre' => 'Coordinación de citas'
+        ],
+        [
+            'usuario' => 'admin3',
+            'correo' => 'soporte@centrosalud.pe',
+            'contrasena' => password_hash('CLAVE_NUEVA_ADMIN3', PASSWORD_DEFAULT),
+            'nombre' => 'Soporte técnico'
+        ]
     ];
 }
+
 
 /** Devuelve los administradores activos desde la base de datos. */
 function administradoresActivos($mysqli)
@@ -276,24 +293,24 @@ function administradoresActivos($mysqli)
 }
 
 /** Busca un administrador por usuario + correo (sin distinguir mayúsculas). */
+
 function buscarAdministrador($mysqli, $usuario, $correo)
 {
-    $usuario = mb_strtolower(trim((string) $usuario), 'UTF-8');
-    $correo  = mb_strtolower(trim((string) $correo), 'UTF-8');
+    $usuario = mb_strtolower(trim((string)$usuario), 'UTF-8');
+    $correo = mb_strtolower(trim((string)$correo), 'UTF-8');
 
     foreach (administradoresActivos($mysqli) as $a) {
-        if (mb_strtolower($a['usuario'], 'UTF-8') === $usuario && mb_strtolower($a['correo'], 'UTF-8') === $correo) {
+        if (
+            mb_strtolower($a['usuario'], 'UTF-8') === $usuario &&
+            mb_strtolower($a['correo'], 'UTF-8') === $correo
+        ) {
             return $a;
         }
     }
-    // Respaldo: aunque la tabla no exista o esté vacía, el admin principal funciona.
-    foreach (administradoresDefecto() as $a) {
-        if (mb_strtolower($a['usuario'], 'UTF-8') === $usuario && mb_strtolower($a['correo'], 'UTF-8') === $correo) {
-            return $a;
-        }
-    }
+
     return null;
 }
+
 
 /**
  * Carga la copia local de `usuarios.json` incluida en el proyecto.
