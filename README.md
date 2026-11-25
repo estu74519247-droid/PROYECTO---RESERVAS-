@@ -62,6 +62,8 @@ Aplicación web académica para la **reserva y el seguimiento de citas médicas*
 
 > No uses Live Server: solo sirve archivos estáticos y no ejecuta PHP.
 
+En VS Code, abre la **carpeta** `C:\xampp\htdocs\PrimeLab`. Para usar **PHP Server: Open file in browser**, ejecuta **PHP Server: Reload server** una vez para cargar la configuración del proyecto y luego abre `index.php` con **Open file in browser**. La extensión redirige el navegador a Apache de XAMPP, que procesa el inicio de sesión y las demás páginas. También puedes usar **Ctrl + Shift + B** como acceso directo a Apache. Si Apache usa otro puerto, cambia la URL en `app/dev/abrir_xampp.php` y `.vscode/tasks.json`.
+
 ### Configuración automática
 - El puerto de MySQL se detecta probando **3306, 3307, 3308, 3309 y 3009**.
 - Si la base `bd_primelab` no existe, se **crea automáticamente**.
