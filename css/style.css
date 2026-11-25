@@ -876,3 +876,62 @@ body.alto-contraste .panel-title { color: #000000; }
     .saltar-contenido { display: none !important; }
 }
 
+/* Optimización de impresión del ticket */
+@media print {
+    @page {
+        size: A4;
+        margin: 12mm;
+    }
+
+    body[data-page="ticket"] {
+        background: #fff !important;
+        font-size: 12px !important;
+    }
+
+    body[data-page="ticket"] .topbar,
+    body[data-page="ticket"] .sidebar,
+    body[data-page="ticket"] .site-footer,
+    body[data-page="ticket"] .ticket-actions,
+    body[data-page="ticket"] .barra-accesibilidad {
+        display: none !important;
+    }
+
+    body[data-page="ticket"] .app-layout,
+    body[data-page="ticket"] .content {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .ticket-card {
+        width: 100% !important;
+        max-width: none !important;
+        padding: 15px !important;
+        margin: 0 !important;
+        box-sizing: border-box;
+        box-shadow: none !important;
+    }
+
+    .page-heading {
+        margin-bottom: 12px !important;
+    }
+
+    .ticket-code {
+        padding: 8px !important;
+    }
+
+    .ticket-card .summary-list > div {
+        display: grid !important;
+        grid-template-columns: 30% 1fr !important;
+        gap: 10px !important;
+        padding: 6px 0 !important;
+        font-size: 12px !important;
+        break-inside: avoid;
+    }
+
+    .ticket-card .summary-list strong {
+        font-size: 12px !important;
+        overflow-wrap: anywhere;
+    }
+}
