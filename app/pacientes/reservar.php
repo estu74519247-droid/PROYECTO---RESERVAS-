@@ -1,6 +1,7 @@
 <?php
 // reservar.php — Reserva de cita en 3 pasos.
 require_once __DIR__ . '/../core/file_conexion.php';
+require_once __DIR__ . '/../core/horarios.php';
 requerirPaciente();
 
 $mysqli = Conectarse();
@@ -11,33 +12,47 @@ $codp = $paciente['codp'];
 $paso = isset($_GET['paso']) ? (int)$_GET['paso'] : 1;
 if ($paso < 1 || $paso > 3) $paso = 1;
 
-// Horarios disponibles (bloques fijos)
-$HORARIOS = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00','16:30'];
-
-function fechaReservable(string $fecha): bool
-{
-    if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $fecha, $partes)) return false;
-    return checkdate((int)$partes[2], (int)$partes[3], (int)$partes[1]) && $fecha >= date('Y-m-d');
+$entrada = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
+$cambio = is_string($entrada['cambiar'] ?? null) ? trim($entrada['cambiar']) : '';
+$citaCambio = null;
+$paramCambio = $cambio === '' ? '' : '&cambiar=' . urlencode($cambio);
+if ($cambio !== '') {
+    $resultado = $mysqli->execute_query("SELECT c.codce, c.codm, c.motivo, c.fechaci, c.horaci, m.codesp FROM cita c JOIN medico m ON m.codm = c.codm WHERE c.codci = ? AND c.codp = ? AND c.estado = 'pendiente'", [$cambio, $codp]);
+    $citaCambio = $resultado ? $resultado->fetch_assoc() : null;
+    if (!$citaCambio || !horarioFuturoCita($citaCambio['fechaci'], $citaCambio['horaci'])) {
+        $mysqli->close();
+        flash('error', 'Solo puedes cambiar el horario de tus citas pendientes que aún no han empezado.');
+        redirigir('mis_citas.php');
+    }
+    $_SESSION['token_cambio_horario'] ??= bin2hex(random_bytes(32));
+    $paso = max(2, $paso);
 }
 
 // Confirmación (POST desde paso 3)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'confirmar') {
-    $centro = trim($_POST['centro'] ?? '');
-    $esp    = trim($_POST['esp'] ?? '');
-    $med    = trim($_POST['med'] ?? '');
+    $centro = $citaCambio['codce'] ?? trim($_POST['centro'] ?? '');
+    $esp    = $citaCambio['codesp'] ?? trim($_POST['esp'] ?? '');
+    $med    = $citaCambio['codm'] ?? trim($_POST['med'] ?? '');
     $fecha  = trim($_POST['fecha'] ?? '');
     $hora   = trim($_POST['hora'] ?? '');
-    $motivo = trim($_POST['motivo'] ?? '');
+    $motivo = $citaCambio['motivo'] ?? trim($_POST['motivo'] ?? '');
 
-    $base = "reservar.php?paso=3&centro=" . urlencode($centro) . "&esp=" . urlencode($esp) . "&med=" . urlencode($med) . "&fecha=" . urlencode($fecha) . "&hora=" . urlencode($hora);
+    if ($citaCambio && (!is_string($_POST['token_cambio_horario'] ?? null) || !hash_equals($_SESSION['token_cambio_horario'], $_POST['token_cambio_horario']))) {
+        $mysqli->close();
+        flash('error', 'No se pudo validar el cambio de horario. Intenta nuevamente desde Mis citas.');
+        redirigir('mis_citas.php');
+    }
+
+    $seleccion = '&' . http_build_query(['centro' => $centro, 'esp' => $esp, 'med' => $med, 'fecha' => $fecha]) . $paramCambio;
+    $base = 'reservar.php?paso=3' . $seleccion . '&hora=' . urlencode($hora);
 
     if ($centro === '' || $esp === '' || $med === '' || $fecha === '' || $hora === '' || $motivo === '') {
         $mysqli->close();
         redirigir($base . "&error=campos");
     }
-    if (!fechaReservable($fecha) || !in_array($hora, $HORARIOS, true)) {
+    if (!fechaLaboralCita($fecha) || !in_array($hora, HORARIOS_CITA, true) || !horarioFuturoCita($fecha, $hora)) {
         $mysqli->close();
-        redirigir("reservar.php?paso=2&centro=" . urlencode($centro) . "&esp=" . urlencode($esp) . "&med=" . urlencode($med) . "&error=horario");
+        redirigir('reservar.php?paso=2' . $seleccion . '&error=horario');
     }
     if (mb_strlen($motivo, 'UTF-8') > 255) {
         $mysqli->close();
@@ -52,21 +67,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'confi
     $stmt->close();
     if (!$okSeleccion) {
         $mysqli->close();
-        redirigir("reservar.php?paso=2&centro=" . urlencode($centro) . "&error=seleccion");
+        redirigir('reservar.php?paso=2' . $seleccion . '&error=seleccion');
     }
 
+    if (!bloquearAgendaCita($mysqli, $med)) {
+        $mysqli->close();
+        redirigir($base . '&error=sistema');
+    }
     // Validar que el horario siga libre para el médico/fecha
-    $stmt = $mysqli->prepare("SELECT COUNT(*) AS n FROM cita WHERE codm = ? AND fechaci = ? AND horaci = ? AND estado NOT IN ('cancelada', 'reprogramada')");
+    $stmt = $mysqli->prepare("SELECT COUNT(*) AS n FROM cita WHERE codm = ? AND fechaci = ? AND horaci = ? AND codci <> ? AND estado NOT IN ('cancelada', 'reprogramada')");
     if (!$stmt) { $mysqli->close(); redirigir($base . "&error=sistema"); }
     $horaDb = $hora . ':00';
-    $stmt->bind_param("sss", $med, $fecha, $horaDb);
+    $stmt->bind_param("ssss", $med, $fecha, $horaDb, $cambio);
     if (!$stmt->execute()) { $stmt->close(); $mysqli->close(); redirigir($base . "&error=sistema"); }
     $ocupado = (int)$stmt->get_result()->fetch_assoc()['n'] > 0;
     $stmt->close();
 
     if ($ocupado) {
         $mysqli->close();
-        redirigir("reservar.php?paso=2&centro=" . urlencode($centro) . "&esp=" . urlencode($esp) . "&error=nohorario");
+        redirigir('reservar.php?paso=2' . $seleccion . '&error=nohorario');
+    }
+
+    if ($citaCambio) {
+        $ok = $mysqli->execute_query("UPDATE cita SET fechaci = ?, horaci = ? WHERE codci = ? AND codp = ? AND codm = ? AND estado = 'pendiente' AND fechaci = ? AND horaci = ?", [$fecha, $horaDb, $cambio, $codp, $med, $citaCambio['fechaci'], $citaCambio['horaci']]);
+        $guardado = $ok && $mysqli->affected_rows === 1;
+        $mysqli->close();
+        if (!$guardado) {
+            flash('error', 'El horario no cambió. Revisa tu cita y elige otro horario.');
+            redirigir('mis_citas.php');
+        }
+        flash('exito', 'El horario de tu cita se actualizó correctamente.');
+        redirigir('ticket.php?codigo=' . urlencode($cambio));
     }
 
     $codci = generarCodigo($mysqli, 'cita', 'codci', 'CIT');
@@ -138,15 +169,16 @@ if ($paso === 1) {
 }
 
 // Paso 2 y 3: datos seleccionados
-$centroSel = trim($_GET['centro'] ?? '');
-$espSel    = trim($_GET['esp'] ?? '');
-$medSel    = trim($_GET['med'] ?? '');
-$fechaSel  = trim($_GET['fecha'] ?? date('Y-m-d'));
-$horaSel   = trim($_GET['hora'] ?? '');
-if (!fechaReservable($fechaSel)) {
-    $fechaSel = date('Y-m-d');
-    $horaSel = '';
+$centroSel = $citaCambio['codce'] ?? trim($_GET['centro'] ?? '');
+$espSel    = $citaCambio['codesp'] ?? trim($_GET['esp'] ?? '');
+$medSel    = $citaCambio['codm'] ?? trim($_GET['med'] ?? '');
+$fechaInicial = date('Y-m-d');
+if (!fechaLaboralCita($fechaInicial) || !horarioFuturoCita($fechaInicial, HORARIOS_CITA[count(HORARIOS_CITA) - 1])) {
+    $fechaInicial = date('Y-m-d', strtotime('next weekday'));
 }
+$fechaSel  = trim($_GET['fecha'] ?? ($citaCambio && fechaLaboralCita($citaCambio['fechaci']) ? $citaCambio['fechaci'] : $fechaInicial));
+$horaSel   = trim($_GET['hora'] ?? '');
+$fechaValida = fechaLaboralCita($fechaSel);
 
 $centroInfo = null; $espsCentro = null; $medicos = null; $espInfo = null; $medInfo = null;
 
@@ -199,7 +231,7 @@ if ($espInfo && $medSel !== '') {
 
 // Horarios ocupados para médico+fecha seleccionados (paso 2/3)
 $ocupados = [];
-if ($medInfo) {
+if ($medInfo && $fechaValida) {
     $stmt = $mysqli->prepare("SELECT horaci FROM cita WHERE codm = ? AND fechaci = ? AND estado NOT IN ('cancelada', 'reprogramada')");
     $stmt->bind_param("ss", $medSel, $fechaSel);
     $stmt->execute();
@@ -207,13 +239,18 @@ if ($medInfo) {
     while ($r = $res->fetch_assoc()) $ocupados[] = substr($r['horaci'], 0, 5);
     $stmt->close();
 }
+if ($medInfo && $fechaValida) {
+    foreach (HORARIOS_CITA as $horaPosible) {
+        if (!horarioFuturoCita($fechaSel, $horaPosible)) $ocupados[] = $horaPosible;
+    }
+}
 
 $mysqli->close();
 
 if ($paso >= 2 && !$centroInfo) {
     redirigir('reservar.php?paso=1&error=centro');
 }
-if ($paso === 3 && (!$espInfo || !$medInfo || !in_array($horaSel, $HORARIOS, true) || in_array($horaSel, $ocupados, true))) {
+if ($paso === 3 && (!$espInfo || !$medInfo || !$fechaValida || !in_array($horaSel, HORARIOS_CITA, true) || in_array($horaSel, $ocupados, true))) {
     $paso = 2;
 }
 
@@ -232,7 +269,7 @@ function pasoClase($n, $actual) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=horarios-2">
 </head>
 <body data-page="reservar">
 <header class="topbar">
@@ -268,8 +305,8 @@ function pasoClase($n, $actual) {
 
         <div class="page-heading">
             <p class="eyebrow">Reserva</p>
-            <h1>Reservar una cita</h1>
-            <p class="muted">Selecciona el centro, la especialidad, el médico y el horario.</p>
+            <h1><?= $citaCambio ? 'Cambiar horario de la cita' : 'Reservar una cita' ?></h1>
+            <p class="muted"><?= $citaCambio ? 'Elige una nueva fecha y hora. Tu médico y centro no cambian.' : 'Selecciona el centro, la especialidad, el médico y el horario.' ?></p>
         </div>
 
         <div class="steps">
@@ -333,6 +370,18 @@ function pasoClase($n, $actual) {
 
             <div class="two-col">
                 <section class="panel">
+                    <?php if ($citaCambio): ?>
+                        <h2 class="panel-title">Nueva fecha</h2>
+                        <form method="GET" action="reservar.php" class="form-stack">
+                            <input type="hidden" name="paso" value="2">
+                            <input type="hidden" name="cambiar" value="<?= e($cambio) ?>">
+                            <label class="field">
+                                <span>Fecha de la cita (lunes a viernes)</span>
+                                <input type="date" name="fecha" value="<?= e($fechaSel) ?>" min="<?= date('Y-m-d') ?>" required>
+                            </label>
+                            <button type="submit" class="button secondary">Ver horarios</button>
+                        </form>
+                    <?php else: ?>
                     <h2 class="panel-title">Especialidad</h2>
                     <form method="GET" action="reservar.php">
                         <input type="hidden" name="paso" value="2">
@@ -371,12 +420,13 @@ function pasoClase($n, $actual) {
                                 <?php endif; ?>
                             </div>
                             <label class="field">
-                                <span>Fecha de la cita</span>
+                                <span>Fecha de la cita (lunes a viernes)</span>
                                 <input type="date" name="fecha" value="<?= e($fechaSel) ?>" min="<?= date('Y-m-d') ?>" onchange="this.form.submit()">
                             </label>
                         </form>
                     <?php else: ?>
                         <p class="muted" style="margin-top:12px;">Selecciona una especialidad para ver los médicos disponibles.</p>
+                    <?php endif; ?>
                     <?php endif; ?>
                 </section>
 
@@ -387,38 +437,47 @@ function pasoClase($n, $actual) {
                             <?= fotoMedico($medInfo['codm'], $medInfo['nomm'], 48) ?>
                             <p class="muted" style="margin:0;"><strong><?= e($medInfo['nomm']) ?></strong><br><?= e(fechaTexto($fechaSel)) ?></p>
                         </div>
+                        <?php if (!$fechaValida): ?>
+                            <p class="muted">No hay horarios para esta fecha. Elige una fecha de lunes a viernes que no haya pasado.</p>
+                        <?php else: ?>
                         <form method="GET" action="reservar.php" class="form-stack">
                             <input type="hidden" name="paso" value="3">
+                            <?php if ($citaCambio): ?><input type="hidden" name="cambiar" value="<?= e($cambio) ?>"><?php endif; ?>
                             <input type="hidden" name="centro" value="<?= e($centroSel) ?>">
                             <input type="hidden" name="esp" value="<?= e($espSel) ?>">
                             <input type="hidden" name="med" value="<?= e($medSel) ?>">
                             <input type="hidden" name="fecha" value="<?= e($fechaSel) ?>">
                             <div class="slot-grid">
-                                <?php foreach ($HORARIOS as $h): $libre = !in_array($h, $ocupados, true); ?>
-                                    <label class="slot <?= $libre ? '' : 'disabled' ?> <?= ($horaSel === $h) ? 'selected' : '' ?>">
-                                        <input type="radio" name="hora" value="<?= e($h) ?>" <?= $libre ? '' : 'disabled' ?> <?= ($horaSel === $h) ? 'checked' : '' ?> required>
+                                <?php foreach (HORARIOS_CITA as $h): $libre = !in_array($h, $ocupados, true); ?>
+                                    <label class="slot">
+                                        <input type="radio" name="hora" value="<?= e($h) ?>" <?= $libre ? 'required' : 'disabled' ?> <?= ($libre && $horaSel === $h) ? 'checked' : '' ?>>
                                         <span><?= e($h) ?></span>
                                     </label>
                                 <?php endforeach; ?>
                             </div>
                             <div class="slot-legend">
                                 <span><i class="dot dot-free"></i> Disponible</span>
-                                <span><i class="dot dot-off"></i> Ocupado</span>
+                                <span><i class="dot dot-off"></i> No disponible</span>
                             </div>
-                            <button type="submit" class="button primary full">Continuar</button>
+                            <?php if (array_diff(HORARIOS_CITA, $ocupados)): ?>
+                                <button type="submit" class="button primary full">Continuar</button>
+                            <?php else: ?>
+                                <p class="muted">No quedan horarios para esta fecha. Elige otro día.</p>
+                            <?php endif; ?>
                         </form>
+                        <?php endif; ?>
                     <?php else: ?>
                         <p class="muted">Selecciona especialidad, médico y fecha para ver los horarios.</p>
                     <?php endif; ?>
                 </section>
             </div>
 
-            <p style="margin-top:14px;"><a href="reservar.php?paso=1" class="link-muted">← Volver a elegir centro</a></p>
+            <p style="margin-top:14px;"><a href="<?= $citaCambio ? 'mis_citas.php' : 'reservar.php?paso=1' ?>" class="link-muted"><?= $citaCambio ? '← Volver a Mis citas' : '← Volver a elegir centro' ?></a></p>
 
         <?php elseif ($paso === 3 && $centroInfo && $espInfo && $medInfo): ?>
             <section class="panel">
-                <h2 class="panel-title">Confirma tu cita</h2>
-                <p class="muted">Revisa los datos antes de registrar la reserva.</p>
+                <h2 class="panel-title"><?= $citaCambio ? 'Confirma el nuevo horario' : 'Confirma tu cita' ?></h2>
+                <p class="muted"><?= $citaCambio ? 'Revisa la nueva fecha y hora antes de guardar el cambio.' : 'Revisa los datos antes de registrar la reserva.' ?></p>
 
                 <h3 class="list-h">Datos del paciente</h3>
                 <div class="data-grid">
@@ -442,18 +501,22 @@ function pasoClase($n, $actual) {
 
                 <form method="POST" action="reservar.php" class="form-stack" style="margin-top:18px;">
                     <input type="hidden" name="accion" value="confirmar">
+                    <?php if ($citaCambio): ?>
+                        <input type="hidden" name="cambiar" value="<?= e($cambio) ?>">
+                        <input type="hidden" name="token_cambio_horario" value="<?= e($_SESSION['token_cambio_horario']) ?>">
+                    <?php endif; ?>
                     <input type="hidden" name="centro" value="<?= e($centroSel) ?>">
                     <input type="hidden" name="esp" value="<?= e($espSel) ?>">
                     <input type="hidden" name="med" value="<?= e($medSel) ?>">
                     <input type="hidden" name="fecha" value="<?= e($fechaSel) ?>">
                     <input type="hidden" name="hora" value="<?= e($horaSel) ?>">
-                    <label class="field">
+                    <?php if (!$citaCambio): ?><label class="field">
                         <span>Motivo de la consulta</span>
                         <textarea name="motivo" rows="3" maxlength="255" required placeholder="Describe brevemente el motivo de tu cita"></textarea>
-                    </label>
+                    </label><?php endif; ?>
                     <div class="ticket-actions">
-                        <button type="submit" class="button primary">Confirmar reserva</button>
-                        <a href="reservar.php?paso=2&centro=<?= e($centroSel) ?>&esp=<?= e($espSel) ?>&med=<?= e($medSel) ?>&fecha=<?= e($fechaSel) ?>" class="button secondary">Volver</a>
+                        <button type="submit" class="button primary"><?= $citaCambio ? 'Guardar nuevo horario' : 'Confirmar reserva' ?></button>
+                        <a href="reservar.php?paso=2&amp;centro=<?= e($centroSel) ?>&amp;esp=<?= e($espSel) ?>&amp;med=<?= e($medSel) ?>&amp;fecha=<?= e($fechaSel) ?><?= e($paramCambio) ?>" class="button secondary">Volver</a>
                     </div>
                 </form>
             </section>

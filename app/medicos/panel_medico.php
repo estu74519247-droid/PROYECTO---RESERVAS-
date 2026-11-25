@@ -1,6 +1,7 @@
 <?php
 // panel_medico.php — Panel del médico: perfil, gestión de citas, atención y reprogramación.
 require_once __DIR__ . '/../core/file_conexion.php';
+require_once __DIR__ . '/../core/horarios.php';
 requerirMedico();
 
 $mysqli = Conectarse();
@@ -88,10 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $motivoReprog = 'Reprogramación solicitada';
         }
 
-        $fechaValida = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $nuevaFecha, $partes)
-            && checkdate((int)$partes[2], (int)$partes[3], (int)$partes[1]);
-        if (!$fechaValida || $nuevaFecha < date('Y-m-d') || !preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/D', $nuevaHora)) {
-            flash('error', 'Indica una fecha y hora válidas para la nueva cita.');
+        if (!fechaLaboralCita($nuevaFecha) || !in_array($nuevaHora, HORARIOS_CITA, true) || !horarioFuturoCita($nuevaFecha, $nuevaHora)) {
+            flash('error', 'Elige un horario futuro de lunes a viernes para la nueva cita.');
             $mysqli->close();
             redirigir('panel_medico.php');
         }
@@ -103,6 +102,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Verificar disponibilidad del mismo médico
+        if (!bloquearAgendaCita($mysqli, $codm)) {
+            flash('error', 'La agenda está ocupada. Intenta nuevamente.');
+            $mysqli->close();
+            redirigir('panel_medico.php');
+        }
         $stmt = $mysqli->prepare("SELECT COUNT(*) AS n FROM cita WHERE codm=? AND fechaci=? AND horaci=? AND estado NOT IN ('cancelada','reprogramada')");
         $stmt->bind_param("sss", $codm, $nuevaFecha, $horaDb);
         $stmt->execute();
@@ -214,7 +218,7 @@ $motivosReprog = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=celeste-azul">
 </head>
 <body>
 <header class="topbar">
@@ -371,12 +375,17 @@ $motivosReprog = [
                                     <input type="text" name="motivo_nueva_cita" maxlength="255" value="<?= e($c['motivo']) ?>">
                                 </label>
                                 <label class="field">
-                                    <span>Nueva fecha</span>
+                                    <span>Nueva fecha (lunes a viernes)</span>
                                     <input type="date" name="nueva_fecha" min="<?= date('Y-m-d') ?>" required>
                                 </label>
                                 <label class="field">
                                     <span>Nueva hora</span>
-                                    <input type="time" name="nueva_hora" required>
+                                    <select name="nueva_hora" required>
+                                        <option value="">Selecciona una hora</option>
+                                        <?php foreach (HORARIOS_CITA as $horario): ?>
+                                            <option value="<?= e($horario) ?>"><?= e($horario) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
                                 </label>
                             </div>
                             <div class="form-grid-2">

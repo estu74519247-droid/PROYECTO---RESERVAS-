@@ -1,6 +1,7 @@
 <?php
 // mis_citas.php — Listado de citas del paciente.
 require_once __DIR__ . '/../core/file_conexion.php';
+require_once __DIR__ . '/../core/horarios.php';
 requerirPaciente();
 
 $mysqli = Conectarse();
@@ -46,7 +47,7 @@ function badgeEstado($estado) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=celeste-azul">
 </head>
 <body>
 <header class="topbar">
@@ -119,6 +120,9 @@ function badgeEstado($estado) {
                                 <td><?= badgeEstado($c['estado']) ?></td>
                                 <td class="actions-cell">
                                     <a href="ticket.php?codigo=<?= e($c['codci']) ?>" class="button secondary small">Ver ticket</a>
+                                    <?php if ($c['estado'] === 'pendiente' && horarioFuturoCita($c['fechaci'], $c['horaci'])): ?>
+                                        <a href="reservar.php?cambiar=<?= e(urlencode($c['codci'])) ?>" class="button secondary small">Cambiar horario</a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endwhile; ?>
