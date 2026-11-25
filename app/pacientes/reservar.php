@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['accion'] ?? '') === 'confi
     }
 
     // Validar que el horario siga libre para el médico/fecha
-    $stmt = $mysqli->prepare("SELECT COUNT(*) AS n FROM cita WHERE codm = ? AND fechaci = ? AND horaci = ? AND estado <> 'cancelada'");
+    $stmt = $mysqli->prepare("SELECT COUNT(*) AS n FROM cita WHERE codm = ? AND fechaci = ? AND horaci = ? AND estado NOT IN ('cancelada', 'reprogramada')");
     if (!$stmt) { $mysqli->close(); redirigir($base . "&error=sistema"); }
     $horaDb = $hora . ':00';
     $stmt->bind_param("sss", $med, $fecha, $horaDb);
@@ -200,7 +200,7 @@ if ($espInfo && $medSel !== '') {
 // Horarios ocupados para médico+fecha seleccionados (paso 2/3)
 $ocupados = [];
 if ($medInfo) {
-    $stmt = $mysqli->prepare("SELECT horaci FROM cita WHERE codm = ? AND fechaci = ? AND estado <> 'cancelada'");
+    $stmt = $mysqli->prepare("SELECT horaci FROM cita WHERE codm = ? AND fechaci = ? AND estado NOT IN ('cancelada', 'reprogramada')");
     $stmt->bind_param("ss", $medSel, $fechaSel);
     $stmt->execute();
     $res = $stmt->get_result();

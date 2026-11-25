@@ -88,14 +88,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $motivoReprog = 'Reprogramación solicitada';
         }
 
-        $hoy = date('Y-m-d');
-        if ($nuevaFecha === '' || $nuevaHora === '' || $nuevaFecha < $hoy) {
+        $fechaValida = preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $nuevaFecha, $partes)
+            && checkdate((int)$partes[2], (int)$partes[3], (int)$partes[1]);
+        if (!$fechaValida || $nuevaFecha < date('Y-m-d') || !preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/D', $nuevaHora)) {
             flash('error', 'Indica una fecha y hora válidas para la nueva cita.');
             $mysqli->close();
             redirigir('panel_medico.php');
         }
-        $horaDb = $nuevaHora;
-        if (preg_match('/^\d{2}:\d{2}$/', $nuevaHora)) $horaDb = $nuevaHora . ':00';
+        $horaDb = $nuevaHora . ':00';
+        if (mb_strlen($motivoCitaNueva, 'UTF-8') > 255) {
+            flash('error', 'El motivo de la nueva cita no puede superar los 255 caracteres.');
+            $mysqli->close();
+            redirigir('panel_medico.php');
+        }
 
         // Verificar disponibilidad del mismo médico
         $stmt = $mysqli->prepare("SELECT COUNT(*) AS n FROM cita WHERE codm=? AND fechaci=? AND horaci=? AND estado NOT IN ('cancelada','reprogramada')");
@@ -118,49 +123,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $seguroPac = $pac['seguro'] ?? 'SIS';
         $costoNuevo = calcularCosto($seguroPac);
 
-        // Marcar cita original como reprogramada y guardar notas/motivo
+        // La cita original, la nueva y el historial se guardan juntos, o no se guarda ninguno.
         $diagDb = $diagnostico !== '' ? $diagnostico : null;
         $indDb  = $indicaciones !== '' ? $indicaciones : null;
-        $obsDb  = 'Reprogramada: ' . $motivoReprog . ' (nueva cita pendiente de generar código)';
-        $estadoOrig = 'reprogramada';
-        $stmt = $mysqli->prepare("UPDATE cita SET estado=?, diagnostico=?, indicaciones=?, observaciones=?, motivo_reprogramacion=? WHERE codci=? AND codm=?");
-        $stmt->bind_param("sssssss", $estadoOrig, $diagDb, $indDb, $obsDb, $motivoReprog, $codci, $codm);
-        $stmt->execute();
-        $stmt->close();
+        if (!$mysqli->begin_transaction()) {
+            flash('error', 'No se pudo iniciar la reprogramación. Intenta nuevamente.');
+            $mysqli->close();
+            redirigir('panel_medico.php');
+        }
+        try {
+            $nuevoCodci = generarCodigo($mysqli, 'cita', 'codci', 'CIT');
+            $obsFinal = 'Reprogramada a ' . $nuevoCodci . ' (' . $motivoReprog . ')';
+            $okOriginal = $mysqli->execute_query(
+                "UPDATE cita SET estado='reprogramada', diagnostico=?, indicaciones=?, observaciones=?, motivo_reprogramacion=? WHERE codci=? AND codm=? AND estado <> 'reprogramada'",
+                [$diagDb, $indDb, $obsFinal, $motivoReprog, $codci, $codm]
+            );
+            if (!$okOriginal || $mysqli->affected_rows !== 1) {
+                throw new RuntimeException('No se pudo actualizar la cita original.');
+            }
 
-        // Crear nueva cita con mismo médico, paciente y centro
-        $nuevoCodci = generarCodigo($mysqli, 'cita', 'codci', 'CIT');
-        $fechareg = date('Y-m-d H:i:s');
-        $estadoNueva = 'pendiente';
-        $stmt = $mysqli->prepare("INSERT INTO cita (codci, fechaci, horaci, motivo, estado, costo, codp, codm, codce, fechareg, observaciones, reprogramada_de) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-        $obsNueva = 'Reprogramada desde ' . $codci . ' (' . $motivoReprog . ')';
-        $stmt->bind_param("sssssdssssss", $nuevoCodci, $nuevaFecha, $horaDb, $motivoCitaNueva, $estadoNueva, $costoNuevo, $cita['codp'], $codm, $cita['codce'], $fechareg, $obsNueva, $codci);
-        $okInsert = $stmt->execute();
-        $stmt->close();
+            $obsNueva = 'Reprogramada desde ' . $codci . ' (' . $motivoReprog . ')';
+            $okNueva = $mysqli->execute_query(
+                "INSERT INTO cita (codci, fechaci, horaci, motivo, estado, costo, codp, codm, codce, fechareg, observaciones, reprogramada_de) VALUES (?,?,?,?,'pendiente',?,?,?,?,NOW(),?,?)",
+                [$nuevoCodci, $nuevaFecha, $horaDb, $motivoCitaNueva, $costoNuevo, $cita['codp'], $codm, $cita['codce'], $obsNueva, $codci]
+            );
+            if (!$okNueva) throw new RuntimeException('No se pudo crear la nueva cita.');
 
-        // Actualizar observación original con código nuevo
-        $obsFinal = 'Reprogramada a ' . $nuevoCodci . ' (' . $motivoReprog . ')';
-        $stmt = $mysqli->prepare("UPDATE cita SET observaciones=? WHERE codci=?");
-        $stmt->bind_param("ss", $obsFinal, $codci);
-        $stmt->execute();
-        $stmt->close();
-
-        // Historial
-        $stmt = $mysqli->prepare("INSERT INTO cita_historial (codci, accion, motivo, fecha, usuario_accion) VALUES (?, 'reprogramacion', ?, NOW(), ?)");
-        $mh = 'Reprogramada a ' . $nuevoCodci . ' por: ' . $motivoReprog;
-        $stmt->bind_param("sss", $codci, $mh, $codm);
-        $stmt->execute();
-        $stmt->close();
-        $stmt = $mysqli->prepare("INSERT INTO cita_historial (codci, accion, motivo, fecha, usuario_accion) VALUES (?, 'creacion', ?, NOW(), ?)");
-        $mh2 = 'Nueva cita creada desde ' . $codci . ' por: ' . $motivoReprog;
-        $stmt->bind_param("sss", $nuevoCodci, $mh2, $codm);
-        $stmt->execute();
-        $stmt->close();
-
-        if ($okInsert) {
+            $okHistorial = $mysqli->execute_query(
+                "INSERT INTO cita_historial (codci, accion, motivo, fecha, usuario_accion) VALUES (?, 'reprogramacion', ?, NOW(), ?), (?, 'creacion', ?, NOW(), ?)",
+                [$codci, 'Reprogramada a ' . $nuevoCodci . ' por: ' . $motivoReprog, $codm,
+                 $nuevoCodci, 'Nueva cita creada desde ' . $codci . ' por: ' . $motivoReprog, $codm]
+            );
+            if (!$okHistorial || !$mysqli->commit()) throw new RuntimeException('No se pudo confirmar la reprogramación.');
             flash('exito', 'Cita ' . $codci . ' reprogramada correctamente. Nueva cita: ' . $nuevoCodci . ' (' . fechaTexto($nuevaFecha) . ' ' . horaTexto($horaDb) . ').');
-        } else {
-            flash('error', 'Se marcó la reprogramación, pero hubo un problema al crear la nueva cita.');
+        } catch (Throwable $e) {
+            $mysqli->rollback();
+            flash('error', 'No se completó la reprogramación. La cita original no cambió.');
         }
         $mysqli->close();
         redirigir('panel_medico.php');

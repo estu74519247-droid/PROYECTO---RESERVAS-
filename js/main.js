@@ -282,7 +282,7 @@ function configurarCamposTexto() {
  * Se ejecuta sola al llegar a 8 dígitos o al pulsar "Buscar DNI".
  */
 let dniConsultado = '';
-let consultaDniEnCurso = false;
+let consultaDniEnCurso = null;
 let temporizadorDni = null;
 
 async function buscarDni(forzar = false) {
@@ -305,10 +305,13 @@ async function buscarDni(forzar = false) {
         return;
     }
 
-    if (consultaDniEnCurso) return;
+    if (consultaDniEnCurso?.dni === dni) return;
     if (!forzar && dni === dniConsultado) return;
 
-    consultaDniEnCurso = true;
+    consultaDniEnCurso?.controlador.abort();
+    const consulta = { dni, controlador: new AbortController() };
+    consultaDniEnCurso = consulta;
+    const sigueVigente = () => consultaDniEnCurso === consulta && inputDni.value.trim() === dni;
     estado.className = 'field-help';
     estado.textContent = 'Consultando DNI...';
     if (boton) {
@@ -318,13 +321,17 @@ async function buscarDni(forzar = false) {
 
     try {
         const url = (window.RUTA_API_DNI || 'consulta_dni.php') + '?dni=' + encodeURIComponent(dni);
-        const respuesta = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        const respuesta = await fetch(url, {
+            headers: { 'Accept': 'application/json' },
+            signal: consulta.controlador.signal
+        });
 
         if (!respuesta.ok) {
             throw new Error('Respuesta ' + respuesta.status);
         }
 
         const datos = await respuesta.json();
+        if (!sigueVigente()) return;
 
         if (datos.ok) {
             if (inputNombres) {
@@ -346,18 +353,19 @@ async function buscarDni(forzar = false) {
             dniConsultado = '';
         }
     } catch (error) {
+        if (!sigueVigente()) return;
         dniConsultado = '';
-        const inputNombres = document.getElementById('nomp');
-        const inputApellidos = document.getElementById('apep');
         if (inputNombres) inputNombres.readOnly = false;
         if (inputApellidos) inputApellidos.readOnly = false;
         estado.className = 'field-help error';
         estado.textContent = 'No se pudo consultar el DNI. Revisa tu conexión o escribe tus nombres y apellidos manualmente.';
     } finally {
-        consultaDniEnCurso = false;
-        if (boton) {
-            boton.disabled = false;
-            boton.textContent = 'Buscar DNI';
+        if (consultaDniEnCurso === consulta) {
+            consultaDniEnCurso = null;
+            if (boton) {
+                boton.disabled = false;
+                boton.textContent = 'Buscar DNI';
+            }
         }
     }
 }
@@ -369,12 +377,14 @@ function configurarAutoConsultaDni() {
     const inputDni = document.getElementById('dni');
     const estado = document.getElementById('dniEstado');
 
-    if (!inputDni) return;
+    if (!inputDni || !estado) return;
 
-    if (estado) {
+    const boton = document.getElementById('btnBuscarDni');
+    const mostrarAyuda = () => {
         estado.className = 'field-help';
         estado.textContent = 'Escribe tus 8 números y buscaremos tus nombres y apellidos automáticamente. También puedes usar el botón «Buscar DNI».';
-    }
+    };
+    mostrarAyuda();
 
     const limpiarNombres = () => {
         const n = document.getElementById('nomp');
@@ -383,23 +393,24 @@ function configurarAutoConsultaDni() {
         if (a) { a.value = ''; a.readOnly = true; }
     };
 
+    let dniAnterior = inputDni.value.trim();
     const intentar = (forzar = false, demora = 350) => {
         clearTimeout(temporizadorDni);
         const dni = inputDni.value.trim();
-        if (dni.length < 8) {
-            if (dniConsultado !== '' || dni.length < 8) {
-                dniConsultado = '';
-                limpiarNombres();
+        if (dni !== dniAnterior) {
+            dniAnterior = dni;
+            dniConsultado = '';
+            consultaDniEnCurso?.controlador.abort();
+            consultaDniEnCurso = null;
+            limpiarNombres();
+            mostrarAyuda();
+            if (boton) {
+                boton.disabled = false;
+                boton.textContent = 'Buscar DNI';
             }
-            return;
         }
-        if (/^\d{8}$/.test(dni)) {
-            if (dni !== dniConsultado) {
-                limpiarNombres();
-            }
-            if (forzar || dni !== dniConsultado) {
-                temporizadorDni = setTimeout(() => buscarDni(forzar), demora);
-            }
+        if (/^\d{8}$/.test(dni) && (forzar || dni !== dniConsultado)) {
+            temporizadorDni = setTimeout(() => buscarDni(forzar), demora);
         }
     };
 
