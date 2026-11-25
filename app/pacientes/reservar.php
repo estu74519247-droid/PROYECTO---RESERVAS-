@@ -405,7 +405,14 @@ function pasoClase($n, $actual) {
                                 <span><i class="dot dot-free"></i> Disponible</span>
                                 <span><i class="dot dot-off"></i> Ocupado</span>
                             </div>
-                            <button type="submit" class="button primary full">Continuar</button>
+                            <p id="mensajeHorario" class="muted" aria-live="polite">
+                                    Selecciona un horario para continuar.
+                            </p>
+
+                            <button type="submit" class="button primary full"
+                                    id="btnContinuar" disabled>
+                                Continuar
+                            </button>
                         </form>
                     <?php else: ?>
                         <p class="muted">Selecciona especialidad, médico y fecha para ver los horarios.</p>
@@ -463,5 +470,31 @@ function pasoClase($n, $actual) {
 
 <footer class="site-footer"><p>PrimeLab — Sistema de reserva de citas en centros de salud públicos</p></footer>
 <script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const boton = document.getElementById('btnContinuar');
+    const mensaje = document.getElementById('mensajeHorario');
+
+    if (!boton || !mensaje) return;
+
+    const formulario = boton.closest('form');
+
+    function actualizarHorario() {
+        const seleccionado = formulario.querySelector(
+            'input[name="hora"]:checked:not(:disabled)'
+        );
+
+        boton.disabled = !seleccionado;
+
+        mensaje.textContent = seleccionado
+            ? 'Horario seleccionado: ' + seleccionado.value
+            : 'Selecciona un horario para continuar.';
+    }
+
+    formulario.addEventListener('change', actualizarHorario);
+
+    actualizarHorario();
+});
+</script>
 </body>
 </html>

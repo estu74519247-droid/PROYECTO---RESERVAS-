@@ -875,4 +875,10 @@ body.alto-contraste .panel-title { color: #000000; }
     .barra-accesibilidad,
     .saltar-contenido { display: none !important; }
 }
-
+#btnContinuar:disabled {
+    background: #a5b5b3;
+    color: #fff;
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.7;
+}
