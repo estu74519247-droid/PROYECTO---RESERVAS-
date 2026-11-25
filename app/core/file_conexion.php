@@ -153,7 +153,7 @@ function asegurarEsquemaPaciente($mysqli)
 
     $agregada = false;
     if (!primelab_tiene_columna($mysqli, 'paciente', 'contrasena')) {
-        if (primelab_query($mysqli, "ALTER TABLE paciente ADD COLUMN contrasena VARCHAR(60) DEFAULT NULL AFTER correo")) {
+        if (primelab_query($mysqli, "ALTER TABLE paciente ADD COLUMN contrasena VARCHAR(255) DEFAULT NULL AFTER correo")) {
             $agregada = true;
         }
     }
@@ -173,6 +173,10 @@ function asegurarEsquemaPaciente($mysqli)
     }
 }
 
+primelab_query(
+    $mysqli,
+    "ALTER TABLE paciente MODIFY contrasena VARCHAR(255) DEFAULT NULL"
+);
 /**
  * Auto-reparación del esquema de `cita` y `cita_historial`.
  * Evita el error fatal "Unknown column 'c.diagnostico'" cuando la base de
@@ -222,7 +226,7 @@ function asegurarAdministradores($mysqli)
           `idadm` int(11) NOT NULL AUTO_INCREMENT,
           `usuario` varchar(30) NOT NULL,
           `correo` varchar(80) NOT NULL,
-          `contrasena` varchar(60) NOT NULL,
+          `contrasena` varchar(255) NOT NULL,
           `nombre` varchar(80) DEFAULT NULL,
           `activo` tinyint(1) NOT NULL DEFAULT 1,
           PRIMARY KEY (`idadm`),
@@ -244,7 +248,10 @@ function asegurarAdministradores($mysqli)
         $stmt->close();
     }
 }
-
+primelab_query(
+    $mysqli,
+    "ALTER TABLE administrador MODIFY contrasena VARCHAR(255) NOT NULL"
+);
 /** Lista de administradores de ejemplo (mínimo 3, solicitado para la demo). */
 function administradoresDefecto()
 {
