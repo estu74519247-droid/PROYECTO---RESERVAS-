@@ -3117,3 +3117,218 @@ body.alto-contraste .panel-title {
         height: auto;
     }
 }
+
+
+/* ==========================================================================
+   MEJORAS — MI PERFIL
+   Pegar AL FINAL de css/style.css, después de los bloques anteriores.
+   Solo CSS: no cambia HTML, PHP ni JS.
+   Corrige: tarjetas sueltas al final de cada cuadrícula (queda un hueco),
+   subtítulo "Datos de contacto" sin jerarquía, botón "Editar mis datos"
+   poco visible y la zona de eliminar cuenta sin aspecto de advertencia.
+   ========================================================================== */
+
+
+/* ---- Títulos de sección dentro de los paneles ---- */
+
+.panel>.panel-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--blue-100);
+}
+
+.panel>.panel-title::before {
+    content: "";
+    width: 5px;
+    height: 22px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, var(--blue-500), var(--teal-800));
+}
+
+
+/* Subtítulo "Datos de contacto y cobertura": separador con línea */
+
+.panel .list-h {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 26px 0 16px !important;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--teal-800);
+}
+
+.panel .list-h::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--blue-200), transparent);
+}
+
+
+/* ---- Cuadrículas de datos: sin huecos al final ---- */
+
+
+/* Si queda 1 tarjeta sola en la última fila, ocupa todo el ancho */
+
+.data-grid>div:last-child:nth-child(3n + 1) {
+    grid-column: 1 / -1;
+}
+
+
+/* Si quedan 2, la última ocupa dos columnas */
+
+.data-grid>div:last-child:nth-child(3n + 2) {
+    grid-column: span 2;
+}
+
+
+/* "No registrada / No registrado": apagado para distinguirlo de un dato real */
+
+.data-grid div>strong {
+    transition: color .2s ease;
+}
+
+
+/* Teléfono y DNI como etiquetas: más compactas y limpias */
+
+.data-grid div:nth-child(1)>strong {
+    font-size: 16px;
+    padding: 5px 14px;
+    letter-spacing: 0.08em;
+    box-shadow: 0 4px 10px rgba(14, 58, 55, 0.25);
+}
+
+
+/* Correo largo: que no se corte feo */
+
+.data-grid strong {
+    overflow-wrap: anywhere;
+    hyphens: auto;
+}
+
+
+/* ---- Botón "Editar mis datos" ---- */
+
+#btnEditarPerfil {
+    margin-top: 6px;
+    min-height: 52px;
+    padding-inline: 28px;
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(135deg, #38a395 0%, var(--blue-500) 35%, var(--teal-800) 100%);
+    box-shadow: 0 10px 22px rgba(20, 80, 75, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+#btnEditarPerfil::before {
+    content: "✎";
+    font-size: 18px;
+}
+
+#btnEditarPerfil:hover {
+    background: linear-gradient(135deg, #38a395 0%, var(--blue-500) 35%, var(--teal-800) 100%);
+    color: #fff;
+    filter: brightness(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px rgba(20, 80, 75, 0.30);
+}
+
+
+/* ---- Formulario de edición ---- */
+
+#formEditarPerfil {
+    margin-top: 18px !important;
+    padding: 22px;
+    background: var(--blue-50);
+    border: 1px solid var(--blue-100);
+    border-radius: 18px;
+    animation: pl-aparecer .35s ease both;
+}
+
+#formEditarPerfil .ticket-actions {
+    margin-top: 6px;
+}
+
+#btnCancelarPerfil {
+    border: 2px solid var(--blue-200);
+}
+
+
+/* ---- Zona de eliminar cuenta: aspecto de advertencia ---- */
+
+.panel.danger-zone {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, #ffffff 55%, var(--danger-bg) 100%);
+    border: 1px solid var(--danger-bd);
+    box-shadow: 0 10px 28px rgba(163, 58, 48, 0.08);
+}
+
+.panel.danger-zone::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(180deg, #d9675b, var(--danger));
+}
+
+.danger-zone>.panel-title {
+    color: var(--danger);
+    border-bottom-color: var(--danger-bd);
+}
+
+.danger-zone>.panel-title::before {
+    background: linear-gradient(180deg, #d9675b, var(--danger));
+}
+
+.danger-zone>.panel-title::after {
+    content: "⚠";
+    font-size: 20px;
+}
+
+.danger-zone .field input:focus {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 4px rgba(163, 58, 48, 0.14);
+}
+
+.danger-zone .button.danger {
+    min-height: 50px;
+    border: 2px solid var(--danger-bd);
+    background: #fff;
+    color: var(--danger);
+}
+
+.danger-zone .button.danger:hover {
+    background: linear-gradient(135deg, #d9675b, var(--danger));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(163, 58, 48, 0.28);
+    transform: translateY(-2px);
+}
+
+
+/* ---- Pantallas pequeñas ---- */
+
+@media (max-width: 900px) {
+    .data-grid>div:last-child:nth-child(3n + 1),
+    .data-grid>div:last-child:nth-child(3n + 2) {
+        grid-column: auto;
+    }
+    .data-grid>div:last-child:nth-child(2n + 1) {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 560px) {
+    .data-grid>div:last-child:nth-child(2n + 1) {
+        grid-column: auto;
+    }
+    #formEditarPerfil {
+        padding: 16px;
+    }
+}
