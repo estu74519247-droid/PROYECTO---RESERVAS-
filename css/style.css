@@ -3980,3 +3980,94 @@ body::-webkit-scrollbar-thumb:hover {
     border-radius: 0;
   }
 }
+
+.site-footer {
+  position: relative;
+  padding: 34px 24px 38px;
+  text-align: center;
+  border-top: 0;
+  background:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(47, 143, 131, 0.1),
+      transparent 65%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.55),
+      rgba(242, 250, 248, 0.65)
+    );
+}
+/* Línea superior con degradado que se desvanece en los lados */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--blue-300) 25%,
+    var(--accent) 50%,
+    var(--blue-300) 75%,
+    transparent
+  );
+  opacity: 0.8;
+}
+
+/* Primera línea: marca con el logo pequeño arriba */
+.site-footer p:first-child {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+.site-footer p:first-child::before {
+  content: "";
+  display: block;
+  width: 34px;
+  height: 34px;
+  margin: 0 auto 10px;
+  border-radius: 0;
+  background: url("../img/PrimeLab%20Logo.png") center / contain no-repeat;
+  filter: drop-shadow(0 4px 6px rgba(20, 80, 75, 0.2));
+}
+
+/* Segunda línea: nota en forma de etiqueta */
+.site-footer p:not(:first-child) {
+  display: inline-block;
+  margin: 0;
+  padding: 6px 16px;
+  font-size: 13.5px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  background: #fff;
+  border: 1px solid var(--blue-100);
+  border-radius: 999px;
+  box-shadow: 0 3px 10px rgba(20, 80, 75, 0.06);
+}
+
+/* Si el pie tiene una sola línea, sin etiqueta */
+.site-footer p:only-child {
+  margin-bottom: 0;
+}
+
+/* Deja espacio para que el botón de Accesibilidad no tape el texto */
+@media (min-width: 901px) {
+  .site-footer {
+    padding-right: max(24px, 190px);
+    padding-left: max(24px, 190px);
+  }
+  .app-layout + .site-footer {
+    padding-left: clamp(24px, 4vw, 56px);
+    padding-right: 190px;
+  }
+}
+@media (max-width: 900px) {
+  .site-footer {
+    padding-bottom: 92px;
+  }
+}
