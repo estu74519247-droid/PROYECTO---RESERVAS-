@@ -39,14 +39,7 @@ if (!$paciente) {
 }
 
 $guardada = (string)($paciente['contrasena'] ?? '');
-if ($guardada === '') {
-    // Compatibilidad con registros creados antes de agregar la contraseña.
-    $guardada = (string)$paciente['dni'];
-    $stmt = $mysqli->prepare("UPDATE paciente SET contrasena = ? WHERE codp = ?");
-    $stmt->bind_param("ss", $guardada, $paciente['codp']);
-    $stmt->execute();
-    $stmt->close();
-}
+
 
 $claveApi = (string)($usuarioDirectorio['contrasena'] ?? '');
 $claveOk = hash_equals($guardada, $contrasena)
